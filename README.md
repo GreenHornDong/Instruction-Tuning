@@ -5,10 +5,10 @@
 
 ## 名词缩写
 LLM：Large language model 大语言模型
-MLLM：Multimodal large language model 多模态大语言模型
-ICL：In context learning 上下文学习
-FT：Finetune 微调
-IFT：Instruction finetune 指令微调
+<br />MLLM：Multimodal large language model 多模态大语言模型
+<br />ICL：In context learning 上下文学习
+<br />FT：Finetune 微调
+<br />IFT：Instruction finetune 指令微调
 
 ## 什么是指令微调
 大语言模型和多模态大语言模型在下游任务上的性能，可以通过在指定任务上进行微调(fientune)提升，或者给定少量提示来增强模型回答的流畅度和准确度，也叫做few-shot prompt，不同于few-shot prompt， 这种方式下模型的参数完全不更新，因此又叫做In context learning(上下文学习)，指令微调是为了让模型能够理解人类指令，在不给出提示的情况下，增强模型的zero-shot能力的一种方式，比如，你可以在许多任务上进行指令微调，在其他任务上(unseen, 模型未见过)进行测试，你会发现模型的理解能力有所提升，可以给出更好的答案。
