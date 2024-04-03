@@ -1,4 +1,4 @@
-# Instruction-Tuning
+### Instruction-Tuning
 
 本仓库记录学习几年来在LLM领域(以及多模态大模型领域)的指令微调相关知识，指令微调(instruction finetuning)，又作指令调优(instruction tuning)，指令跟随(instruction following)。
 
