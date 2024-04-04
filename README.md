@@ -48,7 +48,7 @@ LLM：Large language model 大语言模型
 <br />Dolly(https://www.databricks.com/blog/2023/04/12/dolly-first-open-commercially-viable-instruction-tuned-llm)
 <br />HC3(https://github.com/Hello-SimpleAI/chatgpt-comparison-detection)
 人机对比语料库:数以万计的对比回答，分别来自人类专家和ChatGPT，涵盖了开放领域、金融、医疗、法律和心理学等领域。
-<br />Alpaca-evol-instruct
+<br />Alpaca-evol-instruct(https://github.com/nlpxucan/WizardLM), 从一个初始的指令集开始，使用LLM将其重写为更复杂的指令
 <br />Dolly-v2
 <br />InstructWild
 <br />LIMA数据集。
