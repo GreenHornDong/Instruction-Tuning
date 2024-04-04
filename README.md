@@ -58,7 +58,7 @@ LLM：Large language model 大语言模型
 
 7、通过多样性和质量共同进行自动挑选(首次引入)，多样性的选择依据是设置位置函数(facility location function), 给定数据集V，选出子集A，使得A中的a与V中的v距离最大
 <img width="628" alt="image" src="https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/371686b1-b4c4-4ec7-ae17-e0778929aff4">
-数据质量则使用CHatGPT进行打分或者使用scoring model进行打分，Quality-Diversity Instruction Tuning(QDIT)的分数是多样性和质量的线性组合 f (a|A,α) = (1−α)d(a|A)+αq(a), α是控制质量和多样性的超参数，d(a|A)代表多样性分数，q(a)代表质量分数。依靠上述过程选出指令微调数据，消融实验表明，相对于随机选择和基于质量的选择，该方法效果更好，但是带来的计算开销较大，总数据集为V的话，每次挑选一个a使得QDIT最大需要的时间复杂度为O(V的三次方)，挑选K个则是O(V的三次方*K)。为了确保挑选出的数据确实满足多样性指标，文章使用伯克利神经解析器解析数据集中的根动词和第一直接名词，与随机选择和基于质量的挑选方式比较，表明文章方法确实有效。
+<br />数据质量则使用CHatGPT进行打分或者使用scoring model进行打分，Quality-Diversity Instruction Tuning(QDIT)的分数是多样性和质量的线性组合 f (a|A,α) = (1−α)d(a|A)+αq(a), α是控制质量和多样性的超参数，d(a|A)代表多样性分数，q(a)代表质量分数。依靠上述过程选出指令微调数据，消融实验表明，相对于随机选择和基于质量的选择，该方法效果更好，但是带来的计算开销较大，总数据集为V的话，每次挑选一个a使得QDIT最大需要的时间复杂度为O(V的三次方)，挑选K个则是O(V的三次方*K)。为了确保挑选出的数据确实满足多样性指标，文章使用伯克利神经解析器解析数据集中的根动词和第一直接名词，与随机选择和基于质量的挑选方式比较，表明文章方法确实有效。
 <br />https://arxiv.org/pdf/2305.11206.pdf  Data Diversity Matters for Robust Instruction Tuning
 
 
