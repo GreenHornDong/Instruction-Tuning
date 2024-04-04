@@ -46,6 +46,14 @@ LLM：Large language model 大语言模型
 <br />Alpaca(https://github.com/tatsu-lab/stanford_alpaca), 
 <br />WizardLM(WizardLM: Empowering large pretrained language models to follow complex instructions, https://openreview.net/forum?id=CfXh93NDgH),
 <br />Dolly(https://www.databricks.com/blog/2023/04/12/dolly-first-open-commercially-viable-instruction-tuned-llm)
+<br />HC3(https://github.com/Hello-SimpleAI/chatgpt-comparison-detection)
+人机对比语料库:数以万计的对比回答，分别来自人类专家和ChatGPT，涵盖了开放领域、金融、医疗、法律和心理学等领域。
+<br />Alpaca-evol-instruct
+<br />Dolly-v2
+<br />InstructWild
+<br />LIMA数据集。
+
+测试数据主要包含5个测试集，分别为Koala数据集（180）、WizardLM数据集（218）、Self-instruct数据集（252）、Vicuna数据集（80）和LIMA数据集（300）
 
 #### 数据集的挑选策略
 许多方法选择数据的依据为多样性和质量，利用GPT-3.5或者一些现有的大模型给指令数据集的质量进行打分，利用K-means聚类等方法将指令数据集划分为不同簇，从而选择更加多样的数据。
@@ -61,6 +69,8 @@ LLM：Large language model 大语言模型
 <br />数据质量则使用CHatGPT进行打分或者使用scoring model进行打分，Quality-Diversity Instruction Tuning(QDIT)的分数是多样性和质量的线性组合 f (a|A,α) = (1−α)d(a|A)+αq(a), α是控制质量和多样性的超参数，d(a|A)代表多样性分数，q(a)代表质量分数。依靠上述过程选出指令微调数据，消融实验表明，相对于随机选择和基于质量的选择，该方法效果更好，但是带来的计算开销较大，总数据集为V的话，每次挑选一个a使得QDIT最大需要的时间复杂度为O(V的三次方)，挑选K个则是O(V的三次方*K)。为了确保挑选出的数据确实满足多样性指标，文章使用伯克利神经解析器解析数据集中的根动词和第一直接名词，与随机选择和基于质量的挑选方式比较，表明文章方法确实有效。
 <br />https://arxiv.org/pdf/2305.11206.pdf  Data Diversity Matters for Robust Instruction Tuning
 
+8、MoDS从数据质量、多样性、必要性三个角度来对原始数据集进行数据过滤，以往方法多考虑质量和多样性，没有针对不同模型考虑数据必要性。质量和多样性顾名思义，数据必要性是选择对于大模型较复杂、较难或不擅长的数据，以填补大模型能力的空白。数据质量：采用OpenAssistant的reward-model-debertav3-large-v2模型对数据进行打分，选择出高质量数据集Data；然后使用K-Center-Greedy算法(采用BERT模型生成句向量来计算不同数据之间的距离)对Data1进行数据筛选, 得到种子数据集(Seed Instruction Data)SID。数据必要性：对于一条指令，如果LLM本身回答较好，则说明LLM具有处理该指令的能力，而那些不能处理的指令对于模型微调来说更重要，因此使用SID先微调LLM得到Initial LLM,用Initial LLM对高质量数据集Data1进行response，利用奖励模型对结果进行评分，当分值小于阈值β时，说明Initial LLM不具有处理这些类型指令的能力，获取必要性数据集Data2，对Data2进行多样性筛选，获取增强指令数据集(Augmented Instruction Data)AID。最终使用SID和AID微调并获得最终模型。
+<br />https://arxiv.org/pdf/2311.15653.pdf   MoDS: Model-oriented Data Selection for Instruction Tuning
 
 
 ### 多模态大语言模型领域
