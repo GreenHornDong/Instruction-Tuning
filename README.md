@@ -30,6 +30,8 @@ LLM：Large language model 大语言模型
 
 ## 经典论文
 ### LLM领域
+
+#### IFT原理探究
 1、或许你曾经听过FLAN(finetune language net)，谷歌在本文中首次提出Instruction tuning，文章将指令微调后的137B的模型和175B的GPT-3进行了比较，证明了指令微调的优越性。文章使用62个文本数据集，划分为12个类别，对于每个数据集，文章手工构建了10个独特的模板，这些模板使用自然语言instructions 来描述该数据集的任务。这10个模板中的大多数描述了原始任务，但为了增加多样性，对于每个数据集，还包括最多三个“turned the task around”的模板（例如，对于情感分类，要求生成电影评论的模板，可以增加指令多样性）。然后，将所有数据集混合后，对预训练语言模型做instruction tuning，其中每个数据集的template都是随机选取的。对比实验表明，1、任务类别越多，微调效果越好，也就是指令越多样，效果越好。2、模型size越大，效果越好，小模型进行微调可能会降低性能。3、实验主要研究instruction本身的设定对tuning的作用。模型效果变好的一种可能是任务量比较多，fine-tuning过程即使不加instruction也能达到很好的效果。本文设计了两种不带有instruction的fine-tuning模式作对比，一种是no template，只提供给模型输入和输出。另一种是dataset name，它在输入前面拼接上task和数据集名称。对比结果表明带有指令的数据微调效果比no template高18个点，比dataset name高8个点。
 
 <br />数据构造方式：手工设计模板，从现有数据集根据模板进行转换，数据量很大。
@@ -50,7 +52,7 @@ LLM：Large language model 大语言模型
 <br />数据构造方式：手工构造，从医学、历史、工程和法学四个领域中筛选现有数据集的数据，构造三种训练集分别是Harmonious， Incompatible和Self-aligning，依据是模型在Few-shor ICL情况下能给出正确答案的就是Harmonious，给不出正确答案的是Incompatible，Self-aligning选用和Incompatible一致的指令和问题，但是回答则使用模型本身能够给出的回答。
 <br />https://arxiv.org/abs/2402.18243   Learning or Self-aligning? Rethinking Instruction Fine-tuning
 
-#### 数据集的挑选
+#### IFT数据
 指令微调数据集有很多，如
 <br />Alpaca(https://github.com/tatsu-lab/stanford_alpaca), 
 
@@ -58,7 +60,7 @@ LLM：Large language model 大语言模型
 <br />
 <br />HC3(https://github.com/Hello-SimpleAI/chatgpt-comparison-detection)
 <br />人机对比语料库:数以万计的对比回答，分别来自人类专家和ChatGPT，涵盖了开放领域、金融、医疗、法律和心理学等领域。
-<br />Alpaca-evol-instruct(https://github.com/nlpxucan/WizardLM)
+<br />WizardLM(https://github.com/nlpxucan/WizardLM)
 <br />使用Alpaca的训练数据集作为初始指令集，使用ChaGPT通过4个epoch将其重写为更复杂的指令，得到175K指令数据集
 <br />Dolly-v2
 <br />
@@ -69,25 +71,39 @@ LLM：Large language model 大语言模型
 
 测试数据主要包含5个测试集，分别为Koala数据集（180）、WizardLM数据集（218）、Self-instruct数据集（252）、Vicuna数据集（80）和LIMA数据集（300）
 
-#### 数据集的挑选策略
+#### IFT数据筛选
 许多方法选择数据的依据为多样性和质量，利用GPT-3.5或者一些现有的大模型给指令数据集的质量进行打分，利用K-means聚类等方法将指令数据集划分为不同簇，从而选择更加多样的数据。
 
-5、这篇文章假设SFT应该选择最能反映人类风格的示例。例如，教导LLM巴黎是法国的首都的示范是无益的，因为LLM在预训练阶段已经获得了这样的知识。相反，包含诸如“谢谢”和“首先”等词语的人类风格响应以及包含编号列表的结构化响应对于SFT是有帮助的(与上面的论文3和4相呼应)。文章指出选择响应更长的指令数据往往比多样性和质量高的指令数据表现更加稳定，相同的数据量选择响应更长的指令数据使得微调后的模型效果更好，为了评估模型的效果，选用GPT-4给两个response进行打分并给出解释，为了防止顺序的影响，会把两个response顺序进行交换，当GPT-4对交换前后的评定一致时，认为本次评定有效，消除顺序偏差，其次，在之前的研究中发现GPT-4对于长文本响应的偏好并不大，所以不考虑这一偏差。但是为了明确实验效果，后续采取人工评定的方式对响应进行打分，发现多数情况下GPT-4的选择并不是基于越长越好，50个对话里只有4个是因为响应文本长才使得GPT-4认为其更好。为了研究具有长回复的指令分布，文章使用伯克利神经解析器对来自Alpaca数据集中具有长回复的前1k个实例的指令的前20个最常见的根动词及其前4个直接名词对象进行解析，发现“写作”、“生成”、“创建”和“撰写”等指令根动词组成了所有指令的70％。
-<br />https://doi.org/10.48550/arXiv.2402.06094  Rethinking Data Selection for Supervised Fine-Tuning
-
-6、这篇论文通过精心设计的1000个示例，来证明多样性和质量高的指令微调数据集足以胜过大量质量不高的数据集。消融实验微调LLaMa-7B模型，使用GPT-3.5 Turbo打分，生成5个response取平均。得出结论如下：1、LLM的知识几乎全来自预训练阶段 2、微调使模型学习到输出回答的方式 3、通过小规模的优质数据便可以进行高效对齐。
-<br />https://arxiv.org/pdf/2305.11206.pdf   LIMA: Less Is More for Alignment
-
-7、通过多样性和质量共同进行自动挑选(首次引入)，多样性的选择依据是设置位置函数(facility location function), 给定数据集V，选出子集A，使得A中的a与V中的v距离最大
+1、通过多样性和质量共同进行自动挑选(首次引入)，多样性的选择依据是设置位置函数(facility location function), 给定数据集V，选出子集A，使得A中的a与V中的v距离最大
 <img width="628" alt="image" src="https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/371686b1-b4c4-4ec7-ae17-e0778929aff4">
-<br />数据质量则使用CHatGPT进行打分或者使用scoring model进行打分，Quality-Diversity Instruction Tuning(QDIT)的分数是多样性和质量的线性组合 f (a|A,α) = (1−α)d(a|A)+αq(a), α是控制质量和多样性的超参数，d(a|A)代表多样性分数，q(a)代表质量分数。依靠上述过程选出指令微调数据，消融实验表明，相对于随机选择和基于质量的选择，该方法效果更好，但是带来的计算开销较大，总数据集为V的话，每次挑选一个a使得QDIT最大需要的时间复杂度为O(V的三次方)，挑选K个则是O(V的三次方*K)。为了确保挑选出的数据确实满足多样性指标，文章使用伯克利神经解析器解析数据集中的根动词和第一直接名词，与随机选择和基于质量的挑选方式比较，表明文章方法确实有效。
+<br />数据质量则使用ChatGPT进行打分或者使用scoring model进行打分，Quality-Diversity Instruction Tuning(QDIT)的分数是多样性和质量的线性组合 f (a|A,α) = (1−α)d(a|A)+αq(a), α是控制质量和多样性的超参数，d(a|A)代表多样性分数，q(a)代表质量分数。依靠上述过程选出指令微调数据，消融实验表明，相对于随机选择和基于质量的选择，该方法效果更好，但是带来的计算开销较大，总数据集为V的话，每次挑选一个a使得QDIT最大需要的时间复杂度为O(V的三次方)，挑选K个则是O(V的三次方*K)。为了确保挑选出的数据确实满足多样性指标，文章使用伯克利神经解析器解析数据集中的根动词和第一直接名词，与随机选择和基于质量的挑选方式比较，表明文章方法确实有效。
+
+<br />数据集：小数据集：Alpaca52K，Dolly 15K，大数据集：Ultrachat 1.3M, LMSYS-Chat 1M，组合数据集Alpaca 52K+Dolly 15K+OIG-small-chip2 210K。每个大数据集选10K个数据，小数据集选原数据集的5%左右
 <br />https://arxiv.org/pdf/2305.11206.pdf  Data Diversity Matters for Robust Instruction Tuning
 
-8、MoDS从数据质量、多样性、必要性三个角度来对原始数据集进行数据过滤，以往方法多考虑质量和多样性，没有针对不同模型考虑数据必要性。质量和多样性顾名思义，数据必要性是选择对于大模型较复杂、较难或不擅长的数据，以填补大模型能力的空白。数据质量：采用OpenAssistant的reward-model-debertav3-large-v2模型对数据进行打分，选择出高质量数据集Data；然后使用K-Center-Greedy算法(采用BERT模型生成句向量来计算不同数据之间的距离)对Data1进行数据筛选, 得到种子数据集(Seed Instruction Data)SID。数据必要性：对于一条指令，如果LLM本身回答较好，则说明LLM具有处理该指令的能力，而那些不能处理的指令对于模型微调来说更重要，因此使用SID先微调LLM得到Initial LLM,用Initial LLM对高质量数据集Data1进行response，利用奖励模型对结果进行评分，当分值小于阈值β时，说明Initial LLM不具有处理这些类型指令的能力，获取必要性数据集Data2，对Data2进行多样性筛选，获取增强指令数据集(Augmented Instruction Data)AID。最终使用SID和AID微调并获得最终模型。
+2、MoDS从数据质量、多样性、必要性三个角度来对原始数据集进行数据过滤，以往方法多考虑质量和多样性，没有针对不同模型考虑数据必要性。质量和多样性顾名思义，数据必要性是选择对于大模型较复杂、较难或不擅长的数据，以填补大模型能力的空白。数据质量：采用OpenAssistant的reward-model-debertav3-large-v2模型对数据进行打分，选择出高质量数据集Data；然后使用K-Center-Greedy算法(采用BERT模型生成句向量来计算不同数据之间的距离)对Data1进行数据筛选, 得到种子数据集(Seed Instruction Data)SID。数据必要性：对于一条指令，如果LLM本身回答较好，则说明LLM具有处理该指令的能力，而那些不能处理的指令对于模型微调来说更重要，因此使用SID先微调LLM得到Initial LLM,用Initial LLM对高质量数据集Data1进行response，利用奖励模型对结果进行评分，当分值小于阈值β时，说明Initial LLM不具有处理这些类型指令的能力，获取必要性数据集Data2，对Data2进行多样性筛选，获取增强指令数据集(Augmented Instruction Data)AID。最终使用SID和AID微调并获得最终模型。
 <br />https://arxiv.org/pdf/2311.15653.pdf   MoDS: Model-oriented Data Selection for Instruction Tuning
 
-9、使用Evol-Instruct方法生成指令数据集，使用所有生成的指令数据来对LLaMA-7B进行微调得到WizardLM。Evol-Instruct：从简单的初始指令“1+1=？”开始，随机选择In-depth Evolving或In-breadth Evolving将简单指令升级为更复杂的指令或创建一个新的指令（增加多样性）。In-depth Evolving包括五种操作：添加约束、加深、具体化、增加推理步骤和复杂化输入。In-breadth Evolving是突变，即根据给定的指令生成一个全新的指令。这六种操作通过提示ChaGPT来实现。由于演化后的指令是从LLMs生成的，采用一个指令消除器过滤失败的指令。重复这个演化过程几轮，以获取包含各种复杂性的足够指令数据。从Alpaca训练数据出发，最终生成的数据集为175K的指令微调数据集。对比实验表明Evol-Instruct生成的指令优于人类创建的指令。通过分析高复杂度部分的人类评估结果，证明了WizardLM模型的输出优于OpenAI ChatGPT的输出。在GPT-4的自动评估中，WizardLM在29个任务中的17个超过了ChatGPT的90%。
+3、这篇文章假设SFT应该选择最能反映人类风格的示例。例如，教导LLM巴黎是法国的首都的示范是无益的，因为LLM在预训练阶段已经获得了这样的知识。相反，包含诸如“谢谢”和“首先”等词语的人类风格响应以及包含编号列表的结构化响应对于SFT是有帮助的(与上面的论文3和4相呼应)。文章指出选择响应更长的指令数据往往比多样性和质量高的指令数据表现更加稳定，相同的数据量选择响应更长的指令数据使得微调后的模型效果更好，为了评估模型的效果，选用GPT-4给两个response进行打分并给出解释，为了防止顺序的影响，会把两个response顺序进行交换，当GPT-4对交换前后的评定一致时，认为本次评定有效，消除顺序偏差，其次，在之前的研究中发现GPT-4对于长文本响应的偏好并不大，所以不考虑这一偏差。但是为了明确实验效果，后续采取人工评定的方式对响应进行打分，发现多数情况下GPT-4的选择并不是基于越长越好，50个对话里只有4个是因为响应文本长才使得GPT-4认为其更好。为了研究具有长回复的指令分布，文章使用伯克利神经解析器对来自Alpaca数据集中具有长回复的前1k个实例的指令的前20个最常见的根动词及其前4个直接名词对象进行解析，发现“写作”、“生成”、“创建”和“撰写”等指令根动词组成了所有指令的70％。
+
+<br />从已有数据集Alpaca 52K  WizardLM 70K  Dolly 15K挑选长文本数据
+<br />https://doi.org/10.48550/arXiv.2402.06094  Rethinking Data Selection for Supervised Fine-Tuning
+
+#### IFT数据生成
+1、self-Instruct，使用LLM自动生成指令数据，步骤如下：首先，手工设计了175个表示不同任务的指令，并且给每条数据都编写了（指令, 输入, 输出）/（指令, 输出），将这175条数据作为种子池。其次，使用模型生成新的指令(使用few-shot ICL方式)，对该模型生成的指令判断是否分类任务(prompt模板不同，这里也使用few-shot ICL方式)。然后，使用模型生成实例，对上述模型生成的数据进行过滤和后处理，将经过过滤和后处理的数据添加到种子池中，一直重复上述步骤。文章使用GPT-3进行生成数据，并以此数据微调GPT-3，结果表明相比于原始GPT-3，其能力大幅提升，甚至可以和Instrcut-GPT001媲美。
+
+<br />从175个指令数据出发，使用GPT-3生成了52K的指令，82K的实例。
+<br />https://arxiv.org/pdf/2212.10560.pdf  Self-Instruct: Aligning Language Model with Self Generated Instructions
+
+2、使用Evol-Instruct方法生成指令数据集，使用所有生成的指令数据来对LLaMA-7B进行微调得到WizardLM。Evol-Instruct：从简单的初始指令“1+1=？”开始，随机选择In-depth Evolving或In-breadth Evolving将简单指令升级为更复杂的指令或创建一个新的指令（增加多样性）。In-depth Evolving包括五种操作：添加约束、加深、具体化、增加推理步骤和复杂化输入。In-breadth Evolving是突变，即根据给定的指令生成一个全新的指令。这六种操作通过提示ChaGPT来实现。由于演化后的指令是从LLMs生成的，采用一个指令消除器过滤失败的指令。重复这个演化过程几轮，以获取包含各种复杂性的足够指令数据。对比实验表明Evol-Instruct生成的指令优于人类创建的指令。通过分析高复杂度部分的人类评估结果，证明了WizardLM模型的输出优于OpenAI ChatGPT的输出。在GPT-4的自动评估中，WizardLM在29个任务中的17个超过了ChatGPT的90%。
+
+<br />从Alpaca训练数据出发，使用Evol-Instruct生成175K的指令微调数据集。
 <br />https://arxiv.org/pdf/2304.12244.pdf  WizardLM: Empowering Large Language Models to  Follow Complex Instructions
+
+3、这篇论文通过精心设计的1000个示例，来证明多样性和质量高的指令微调数据集足以胜过大量质量不高的数据集。对比实验表明经过1K微调的LLaMA-65B(LIMA)模型效果优于Alpaca 65B(52K数据微调)和DaVinci003。消融实验微调LLaMa-7B模型，使用GPT-3.5 Turbo打分，生成5个response取平均。得出结论如下：1、LLM的知识几乎全来自预训练阶段 2、多样性和数据质量对模型效果的影响都非常大，数据量几乎无影响。文章最后的消融实验将经过1k数据微调的模型在30个多轮对话样本上再次微调，就大幅提升了模型的多轮对话能力，再次证明质量和多样性是关键，而非数据量。
+
+<br />手工设计：750个构造于三个社区论坛中，而剩余的250个为人工创作。
+<br />https://arxiv.org/pdf/2305.11206.pdf   LIMA: Less Is More for Alignment
 
 
 ### 多模态大语言模型领域
