@@ -30,7 +30,7 @@ LLM：Large language model 大语言模型
 
 ## 经典论文
 ### LLM领域
-1、或许你曾经听过FLAN(finetune language net)，谷歌在本文中首次提出Instruction tuning，文章将指令微调后的137B的模型和175B的GPT-3进行了比较，证明了指令微调的优越性
+1、或许你曾经听过FLAN(finetune language net)，谷歌在本文中首次提出Instruction tuning，文章将指令微调后的137B的模型和175B的GPT-3进行了比较，证明了指令微调的优越性。文章使用62个文本数据集，划分为12个类别，对于每个数据集，文章手工构建了10个独特的模板，这些模板使用自然语言instructions 来描述该数据集的任务。这10个模板中的大多数描述了原始任务，但为了增加多样性，对于每个数据集，还包括最多三个“turned the task around”的模板（例如，对于情感分类，要求生成电影评论的模板，可以增加指令多样性）。然后，将所有数据集混合后，对预训练语言模型做instruction tuning，其中每个数据集的template都是随机选取的。对比实验表明，1、任务类别越多，微调效果越好，也就是指令越多样，效果越好。2、模型size越大，效果越好，小模型进行微调可能会降低性能。3、实验主要研究instruction本身的设定对tuning的作用。模型效果变好的一种可能是任务量比较多，fine-tuning过程即使不加instruction也能达到很好的效果。本文设计了两种fine-tuning模式作对比，他们都不带有instruction。一种叫做no template设定，只提供给模型输入和输出。另一种叫做dataset name设定，它在输入前面拼接上task和数据集名称。对比结果表明带有指令的数据微调效果比no template高18个点，比dataset name高8个点。
 <br />https://arxiv.org/pdf/2109.01652.pdf  Finetuned Language Models are Zero-Shot Learners
 
 2、同年，谷歌针对CoT(chain of thought，链式思维)和few-shot在Instruction-Tuning中能否提升模型的能力，以及模型大小和数据集大小对指令调优的影响进行了进一步探究，这篇文章用了146种任务，473个数据集，最终确定指令微调任务的多样性可以提升模型的能力, CoT数据可以提升模型的推理能力, 模型规模越大，经过指令微调的效果越好，还没看到上限，文中最大540B
@@ -44,14 +44,19 @@ LLM：Large language model 大语言模型
 #### 数据集的挑选
 指令微调数据集有很多，如
 <br />Alpaca(https://github.com/tatsu-lab/stanford_alpaca), 
-<br />WizardLM(WizardLM: Empowering large pretrained language models to follow complex instructions, https://openreview.net/forum?id=CfXh93NDgH),
+
 <br />Dolly(https://www.databricks.com/blog/2023/04/12/dolly-first-open-commercially-viable-instruction-tuned-llm)
+<br />
 <br />HC3(https://github.com/Hello-SimpleAI/chatgpt-comparison-detection)
-人机对比语料库:数以万计的对比回答，分别来自人类专家和ChatGPT，涵盖了开放领域、金融、医疗、法律和心理学等领域。
-<br />Alpaca-evol-instruct(https://github.com/nlpxucan/WizardLM), 从一个初始的指令集开始，使用LLM将其重写为更复杂的指令
+<br />人机对比语料库:数以万计的对比回答，分别来自人类专家和ChatGPT，涵盖了开放领域、金融、医疗、法律和心理学等领域。
+<br />Alpaca-evol-instruct(https://github.com/nlpxucan/WizardLM)
+<br />使用Alpaca的训练数据集作为初始指令集，使用ChaGPT通过4个epoch将其重写为更复杂的指令，得到175K指令数据集
 <br />Dolly-v2
+<br />
 <br />InstructWild
-<br />LIMA数据集。
+<br />
+<br />LIMA
+<br />
 
 测试数据主要包含5个测试集，分别为Koala数据集（180）、WizardLM数据集（218）、Self-instruct数据集（252）、Vicuna数据集（80）和LIMA数据集（300）
 
@@ -71,6 +76,9 @@ LLM：Large language model 大语言模型
 
 8、MoDS从数据质量、多样性、必要性三个角度来对原始数据集进行数据过滤，以往方法多考虑质量和多样性，没有针对不同模型考虑数据必要性。质量和多样性顾名思义，数据必要性是选择对于大模型较复杂、较难或不擅长的数据，以填补大模型能力的空白。数据质量：采用OpenAssistant的reward-model-debertav3-large-v2模型对数据进行打分，选择出高质量数据集Data；然后使用K-Center-Greedy算法(采用BERT模型生成句向量来计算不同数据之间的距离)对Data1进行数据筛选, 得到种子数据集(Seed Instruction Data)SID。数据必要性：对于一条指令，如果LLM本身回答较好，则说明LLM具有处理该指令的能力，而那些不能处理的指令对于模型微调来说更重要，因此使用SID先微调LLM得到Initial LLM,用Initial LLM对高质量数据集Data1进行response，利用奖励模型对结果进行评分，当分值小于阈值β时，说明Initial LLM不具有处理这些类型指令的能力，获取必要性数据集Data2，对Data2进行多样性筛选，获取增强指令数据集(Augmented Instruction Data)AID。最终使用SID和AID微调并获得最终模型。
 <br />https://arxiv.org/pdf/2311.15653.pdf   MoDS: Model-oriented Data Selection for Instruction Tuning
+
+9、使用Evol-Instruct方法生成指令数据集，使用所有生成的指令数据来对LLaMA-7B进行微调得到WizardLM。Evol-Instruct：从简单的初始指令“1+1=？”开始，随机选择In-depth Evolving或In-breadth Evolving将简单指令升级为更复杂的指令或创建一个新的指令（增加多样性）。In-depth Evolving包括五种操作：添加约束、加深、具体化、增加推理步骤和复杂化输入。In-breadth Evolving是突变，即根据给定的指令生成一个全新的指令。这六种操作通过提示ChaGPT来实现。由于演化后的指令是从LLMs生成的，采用一个指令消除器过滤失败的指令。重复这个演化过程几轮，以获取包含各种复杂性的足够指令数据。从Alpaca训练数据出发，最终生成的数据集为175K的指令微调数据集。对比实验表明Evol-Instruct生成的指令优于人类创建的指令。通过分析高复杂度部分的人类评估结果，证明了WizardLM模型的输出优于OpenAI ChatGPT的输出。在GPT-4的自动评估中，WizardLM在29个任务中的17个超过了ChatGPT的90%。
+<br />https://arxiv.org/pdf/2304.12244.pdf  WizardLM: Empowering Large Language Models to  Follow Complex Instructions
 
 
 ### 多模态大语言模型领域
