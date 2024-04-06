@@ -32,19 +32,19 @@ LLM：Large language model 大语言模型
 ### LLM领域
 
 #### IFT原理探究
-1、或许你曾经听过FLAN(finetune language net)，谷歌在本文中首次提出Instruction tuning，文章将指令微调后的137B的模型和175B的GPT-3进行了比较，证明了指令微调的优越性。文章使用62个文本数据集，划分为12个类别，对于每个数据集，文章手工构建了10个独特的模板，这些模板使用自然语言instructions 来描述该数据集的任务。这10个模板中的大多数描述了原始任务，但为了增加多样性，对于每个数据集，还包括最多三个“turned the task around”的模板（例如，对于情感分类，要求生成电影评论的模板，可以增加指令多样性）。然后，将所有数据集混合后，对预训练语言模型做instruction tuning，其中每个数据集的template都是随机选取的。对比实验表明，1、任务类别越多，微调效果越好，也就是指令越多样，效果越好。2、模型size越大，效果越好，小模型进行微调可能会降低性能。3、实验主要研究instruction本身的设定对tuning的作用。模型效果变好的一种可能是任务量比较多，fine-tuning过程即使不加instruction也能达到很好的效果。本文设计了两种不带有instruction的fine-tuning模式作对比，一种是no template，只提供给模型输入和输出。另一种是dataset name，它在输入前面拼接上task和数据集名称。对比结果表明带有指令的数据微调效果比no template高18个点，比dataset name高8个点。
+1、或许你曾经听过FLAN(finetune language net)，谷歌在本文中首次提出Instruction tuning，文章将指令微调后的137B的模型和175B的GPT-3进行了比较，证明了指令微调的优越性。文章使用62个文本数据集，划分为12个类别，对于每个数据集，文章手工构建了10个独特的模板，这些模板使用自然语言instructions 来描述该数据集的任务。这10个模板中的大多数描述了原始任务，但为了增加多样性，对于每个数据集，还包括最多三个“turned the task around”的模板（例如，对于情感分类，要求生成电影评论的模板，可以增加指令多样性）。然后，将所有数据集混合后，对预训练语言模型做instruction tuning，其中每个数据集的template都是随机选取的。对比实验表明，实验1、任务类别越多，微调效果越好，也就是指令越多样，效果越好。实验2、模型size越大，效果越好，小模型进行微调可能会降低性能。实验3、主要研究instruction本身的设定对tuning的作用。模型效果变好的一种可能是任务量比较多，fine-tuning过程即使不加instruction也能达到很好的效果。本文设计了两种不带有instruction的fine-tuning模式作对比，一种是no template，只提供给模型输入和输出。另一种是dataset name，它在输入前面拼接上task和数据集名称。对比结果表明带有指令的数据微调效果比no template高18个点，比dataset name高8个点。
 
 <br />数据构造方式：手工设计模板，从现有数据集根据模板进行转换，数据量很大。
 <br />https://arxiv.org/pdf/2109.01652.pdf  Finetuned Language Models are Zero-Shot Learners
 
-2、同年，谷歌针对CoT(chain of thought，链式思维)和few-shot在Instruction-Tuning中能否提升模型的能力，以及模型大小和数据集大小对指令调优的影响进行了进一步探究，这篇文章用了146个任务类别，473个数据集，1836 种指令任务，最终确定指令微调任务的多样性可以提升模型的能力, CoT数据可以提升模型的推理能力, 模型规模越大，经过指令微调的效果越好，还没看到上限，文中最大540B
+2、同年，谷歌针对CoT(chain of thought，链式思维)在Instruction-Tuning中能否提升模型的能力，以及模型大小和数据集大小对指令调优的影响进行了进一步探究，这篇文章用了146个任务类别，473个数据集，1836 种指令任务，最终确定指令微调任务的多样性可以提升模型的能力, CoT数据可以显著提升模型的推理能力(以及在未见任务上的泛化能力), 模型规模越大，经过指令微调的效果越好，还没看到上限，文中最大540B
 
-<br />数据构造方式：手工构造，数据量很大。
+<br />数据构造方式：手工构造，数据量很大，CoT数据为人工编写。
 <br />https://doi.org/10.48550/arXiv.2210.11416   Scaling Instruction-Finetuned Language Models
 
 3、有没有想过为什么指令微调效果会变好呢，这篇文章给出了一些定量分析，从token的偏移角度出发，对比微调后的模型和微调前的模型的回答的token分布，发现token会产生%5-8%左右的偏移(使用的模型为 Llama-2-7b -> Llama-2-7b-chat,  Llama-2-7b -> Vicuna-7b-v1.5, Mistral-7b -> Mistral-7b-instruct), 而且产生偏移的多数都是风格token，比如however, if这种词汇，会让模型的回答更加流畅和清晰，而模型回答中的关键词汇和信息，是模型本身经过预训练以后就具有的，也就是base模型和chat模型(tuned)产生的回答中关键信息一致，很有趣，所以这篇文章使用ICL作为提示+系统提示来代替指令微调。  
 
-<br />数据构造方式：手工构造。
+<br />数据构造方式：手工构造，本文ICL数据的构造步骤较为繁琐。
 <br />https://arxiv.org/abs/2312.01552   The Unlocking Spell on Base LLMs: Rethinking Alignment via In-Context Learning
 
 4、从上述问题出发，国内软件所联合美团提出以下论文，并发表观点：(1) 对于指令微调而言，学习与模型参数知识不一致的世界知识无法带来增益，甚至会造成额外的损害。(2) 有效指令微调的本质在于完成行为模式转换的同时，保持指令微调前后模型参数知识的一致性，但是使用与模型内部参数知识完全一致的指令数据并不总能取得最优性能。    换句话说，指令微调的核心作用机制并不是让模型去“学习”额外的知识，而是将模型内部现有的知识进行一种自我的对齐。这个其实就很符合一直以来的猜想，模型学不到额外知识，毕竟你参数也没怎么更新，指令微调数据里面的内容也都是用的已有的数据，所以只是让模型学会回答，这篇文章也对应文章3的使用ICL去替代指令调优，因为本质上ICL连参数更新都没有，更是教会模型如何去回答信息，从而可以产生和IFT相似的效果。文章通过计算指令微调前后模型预测排序的Pearson相关系数，来衡量模型内部知识的一致性，在一定范围内，微调数据一致性越高，模型效果越好。
@@ -55,21 +55,16 @@ LLM：Large language model 大语言模型
 #### IFT数据
 指令微调数据集有很多，如
 <br />Alpaca(https://github.com/tatsu-lab/stanford_alpaca), 
-
+<br />使用self-Instruct的方式生成数据，self-Instruct介绍见下文，数据生成模型使用OpenAI’s text-davinci-003，生成52K的IFT数据
 <br />Dolly(https://www.databricks.com/blog/2023/04/12/dolly-first-open-commercially-viable-instruction-tuned-llm)
-<br />
+<br />dolly-15k是由5000多名Databricks员工在2023年3月和4月期间手工创建的。包括开放式问答，封闭式问答，信息提取，总结，头脑风暴，分类和创造性写作。
 <br />HC3(https://github.com/Hello-SimpleAI/chatgpt-comparison-detection)
 <br />人机对比语料库:数以万计的对比回答，分别来自人类专家和ChatGPT，涵盖了开放领域、金融、医疗、法律和心理学等领域。
 <br />WizardLM(https://github.com/nlpxucan/WizardLM)
-<br />使用Alpaca的训练数据集作为初始指令集，使用ChaGPT通过4个epoch将其重写为更复杂的指令，得到175K指令数据集
-<br />Dolly-v2
-<br />
-<br />InstructWild
-<br />
+<br />使用Alpaca的训练数据集作为初始指令集，使用ChaGPT通过4个epoch将其重写为更复杂的指令，得到175K指令数据集 
 <br />LIMA
-<br />
+<br />1K的训练数据，75%是从三个社区问答网站（Stack Exchange、wikiHow和Pushshift Reddit）中抽样的；20%手工编写，5%来自Super-Natural Instructions数据集的抽样。
 
-测试数据主要包含5个测试集，分别为Koala数据集（180）、WizardLM数据集（218）、Self-instruct数据集（252）、Vicuna数据集（80）和LIMA数据集（300）
 
 #### IFT数据筛选
 许多方法选择数据的依据为多样性和质量，利用GPT-3.5或者一些现有的大模型给指令数据集的质量进行打分，利用K-means聚类等方法将指令数据集划分为不同簇，从而选择更加多样的数据。
