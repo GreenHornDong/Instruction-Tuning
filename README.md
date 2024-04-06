@@ -108,7 +108,7 @@ LLM：Large language model 大语言模型
 3、这篇论文通过精心设计的1000个示例，来证明多样性和质量高的指令微调数据集足以胜过大量质量不高的数据集。对比实验表明经过1K微调的LLaMA-65B(LIMA)模型效果优于Alpaca 65B(52K数据微调)和DaVinci003。消融实验微调LLaMa-7B模型，使用GPT-3.5 Turbo打分，生成5个response取平均。得出结论如下：1、LLM的知识几乎全来自预训练阶段 2、多样性和数据质量对模型效果的影响都非常大，数据量几乎无影响。文章最后的消融实验将经过1k数据微调的模型在30个多轮对话样本上再次微调，就大幅提升了模型的多轮对话能力，再次证明质量和多样性是关键，而非数据量。
 
 <br />手工设计：750个构造于三个社区论坛中，而剩余的250个为人工创作。
-<br />https://arxiv.org/pdf/2305.11206.pdf   LIMA: Less Is More for Alignment
+<br />https://arxiv.org/pdf/2305.11206.pdf     LIMA: Less Is More for Alignment
 
 
 ### 多模态大语言模型领域
@@ -118,6 +118,11 @@ LLM：Large language model 大语言模型
 1、MULTIINSTRUCT从现有的21个视觉语言数据集中构造了10类任务，具体包括62个任务，并手工为每类任务设计5个指令模板，文章还探究使用纯语言指令数据(NATURAL INSTRUCTIONS)结合MULTIINSTRUCT的微调效果。62个任务中有34个任务是从现有数据集获取的，剩下的28个任务通过从现有任务进行改写生成，例如区域描述任务可以改写为根据描述选择对应区域和根据区域选择对应描述。针对每个任务，生成5000-5M个实例，每个实例随机使用5个任务模板中的一个。实验结果表明，经过微调的OFA模型的多模态zero-shot能力大幅提升，首先在纯文本指令数据集NATURAL INSTRUCTIONS上微调，再在MULTIINSTRUCT数据上微调，可以获得表现最优的模型。消融实验表明：1、与FLAN类似，通过逐步增加视觉指令微调数据的种类和数量，模型的效果会越来越好，2、仅使用文本指令微调会降低模型的视觉理解能力，原因是模型对视觉标记的关注减少。
 <img width="552" alt="image" src="https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/6ce93287-a37d-41ec-8a4a-e9eca847251b">
 
-<br />https://arxiv.org/pdf/2212.10773.pdf  MULTIINSTRUCT: Improving Multi-Modal Zero-Shot Learning via Instruction Tuning
+<br />https://arxiv.org/pdf/2212.10773.pdf   MULTIINSTRUCT: Improving Multi-Modal Zero-Shot Learning via Instruction Tuning
 
-2、
+2、LLaVA模型在158K的IFT数据集上进行微调，数据来源为现有的视觉描述数据集，将其中的图片描述+图像(将图像转换为由文本表示的Context，文章采用了两种Context，一种是图片描述，另一种是box以及对应物体的种类。)等信息以文本格式输入GPT-4或者Chatgpt，让他们生成对应的问题和回答，指令手工制作，但是格式和内容十分简单，基本是围绕详细描述一下图片中的内容这种话制定的。
+
+<br />https://arxiv.org/pdf/2304.08485.pdf     Visual Instruction Tuning
+
+3、
+
