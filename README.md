@@ -62,7 +62,7 @@ LLM：Large language model 大语言模型
 <br />人机对比语料库:数以万计的对比回答，分别来自人类专家和ChatGPT，涵盖了开放领域、金融、医疗、法律和心理学等领域。
 <br />WizardLM(https://github.com/nlpxucan/WizardLM)
 <br />使用Alpaca的训练数据集作为初始指令集，使用ChaGPT通过4个epoch将其重写为更复杂的指令，得到175K指令数据集 
-<br />LIMA
+<br />LIMA(https://arxiv.org/pdf/2305.11206.pdf)
 <br />1K的训练数据，75%是从三个社区问答网站（Stack Exchange、wikiHow和Pushshift Reddit）中抽样的；20%手工编写，5%来自Super-Natural Instructions数据集的抽样。
 
 
@@ -76,10 +76,20 @@ LLM：Large language model 大语言模型
 <br />数据集：小数据集：Alpaca52K，Dolly 15K，大数据集：Ultrachat 1.3M, LMSYS-Chat 1M，组合数据集Alpaca 52K+Dolly 15K+OIG-small-chip2 210K。每个大数据集选10K个数据，小数据集选原数据集的5%左右
 <br />https://arxiv.org/pdf/2305.11206.pdf  Data Diversity Matters for Robust Instruction Tuning
 
-2、MoDS从数据质量、多样性、必要性三个角度来对原始数据集进行数据过滤，以往方法多考虑质量和多样性，没有针对不同模型考虑数据必要性。质量和多样性顾名思义，数据必要性是选择对于大模型较复杂、较难或不擅长的数据，以填补大模型能力的空白。数据质量：采用OpenAssistant的reward-model-debertav3-large-v2模型对数据进行打分，选择出高质量数据集Data；然后使用K-Center-Greedy算法(采用BERT模型生成句向量来计算不同数据之间的距离)对Data1进行数据筛选, 得到种子数据集(Seed Instruction Data)SID。数据必要性：对于一条指令，如果LLM本身回答较好，则说明LLM具有处理该指令的能力，而那些不能处理的指令对于模型微调来说更重要，因此使用SID先微调LLM得到Initial LLM,用Initial LLM对高质量数据集Data1进行response，利用奖励模型对结果进行评分，当分值小于阈值β时，说明Initial LLM不具有处理这些类型指令的能力，获取必要性数据集Data2，对Data2进行多样性筛选，获取增强指令数据集(Augmented Instruction Data)AID。最终使用SID和AID微调并获得最终模型。
+2、通过Chatgpt对Alpaca的52K数据进行打分(0-5)，选择分数高于4.5的数据，共计9K，在9K高质量数据上进行微调的结果要优于Alpaca, 在多种数据集和模型上的实验表明文章方法确实有效。
+
+<br />Chatgpt对数据打分，根据分值高于某一阈值筛选IFT数据
+<br />https://arxiv.org/pdf/2307.08701.pdf  ALPAGASUS: TRAINING A BETTER ALPACA WITH FEWER DATA
+
+3、MoDS从数据质量、多样性、必要性三个角度来对原始数据集进行数据过滤，以往方法多考虑质量和多样性，没有针对不同模型考虑数据必要性。质量和多样性顾名思义，数据必要性是选择对于大模型较复杂、较难或不擅长的数据，以填补大模型能力的空白。数据质量：采用OpenAssistant的reward-model-debertav3-large-v2模型对数据进行打分，选择出高质量数据集Data；然后使用K-Center-Greedy算法(采用BERT模型生成句向量来计算不同数据之间的距离)对Data1进行数据筛选, 得到种子数据集(Seed Instruction Data)SID。数据必要性：对于一条指令，如果LLM本身回答较好，则说明LLM具有处理该指令的能力，而那些不能处理的指令对于模型微调来说更重要，因此使用SID先微调LLM得到Initial LLM,用Initial LLM对高质量数据集Data1进行response，利用奖励模型对结果进行评分，当分值小于阈值β时，说明Initial LLM不具有处理这些类型指令的能力，获取必要性数据集Data2，对Data2进行多样性筛选，获取增强指令数据集(Augmented Instruction Data)AID。最终使用SID和AID微调并获得最终模型。
+
 <br />https://arxiv.org/pdf/2311.15653.pdf   MoDS: Model-oriented Data Selection for Instruction Tuning
 
-3、这篇文章假设SFT应该选择最能反映人类风格的示例。例如，教导LLM巴黎是法国的首都的示范是无益的，因为LLM在预训练阶段已经获得了这样的知识。相反，包含诸如“谢谢”和“首先”等词语的人类风格响应以及包含编号列表的结构化响应对于SFT是有帮助的(与上面的论文3和4相呼应)。文章指出选择响应更长的指令数据往往比多样性和质量高的指令数据表现更加稳定，相同的数据量选择响应更长的指令数据使得微调后的模型效果更好，为了评估模型的效果，选用GPT-4给两个response进行打分并给出解释，为了防止顺序的影响，会把两个response顺序进行交换，当GPT-4对交换前后的评定一致时，认为本次评定有效，消除顺序偏差，其次，在之前的研究中发现GPT-4对于长文本响应的偏好并不大，所以不考虑这一偏差。但是为了明确实验效果，后续采取人工评定的方式对响应进行打分，发现多数情况下GPT-4的选择并不是基于越长越好，50个对话里只有4个是因为响应文本长才使得GPT-4认为其更好。为了研究具有长回复的指令分布，文章使用伯克利神经解析器对来自Alpaca数据集中具有长回复的前1k个实例的指令的前20个最常见的根动词及其前4个直接名词对象进行解析，发现“写作”、“生成”、“创建”和“撰写”等指令根动词组成了所有指令的70％。
+4、该论文提出一种迭代的筛选指令微调数据数据集的方法，Self-Evolved：给定初始模型M和初始数据集V，随机挑选K个数据点作为P0，剩下的数据作为Q0，使用P0微调M，得到M1，使用M1模型计算数据集的embedding，使用K均值聚类从Q0中挑选K个距离P0最远的数据，并将其加入P0得到P1，使用P1微调模型得到M2，此时Q1是V-P1，然后按照上述方法迭代T次，得到最终的模型MT。对比实验表明该方法在许多情况下优于使用完整IFT数据集的方法，并可以降低计算消耗。
+
+<br />https://arxiv.org/pdf/2311.08182.pdf   Self-Evolved Diverse Data Sampling for Efficient Instruction Tuning 
+
+5、这篇文章假设SFT应该选择最能反映人类风格的示例。例如，教导LLM巴黎是法国的首都的示范是无益的，因为LLM在预训练阶段已经获得了这样的知识。相反，包含诸如“谢谢”和“首先”等词语的人类风格响应以及包含编号列表的结构化响应对于SFT是有帮助的(与上面的论文3和4相呼应)。文章指出选择响应更长的指令数据往往比多样性和质量高的指令数据表现更加稳定，相同的数据量选择响应更长的指令数据使得微调后的模型效果更好，为了评估模型的效果，选用GPT-4给两个response进行打分并给出解释，为了防止顺序的影响，会把两个response顺序进行交换，当GPT-4对交换前后的评定一致时，认为本次评定有效，消除顺序偏差，其次，在之前的研究中发现GPT-4对于长文本响应的偏好并不大，所以不考虑这一偏差。但是为了明确实验效果，后续采取人工评定的方式对响应进行打分，发现多数情况下GPT-4的选择并不是基于越长越好，50个对话里只有4个是因为响应文本长才使得GPT-4认为其更好。为了研究具有长回复的指令分布，文章使用伯克利神经解析器对来自Alpaca数据集中具有长回复的前1k个实例的指令的前20个最常见的根动词及其前4个直接名词对象进行解析，发现“写作”、“生成”、“创建”和“撰写”等指令根动词组成了所有指令的70％。
 
 <br />从已有数据集Alpaca 52K  WizardLM 70K  Dolly 15K挑选长文本数据
 <br />https://doi.org/10.48550/arXiv.2402.06094  Rethinking Data Selection for Supervised Fine-Tuning
@@ -104,4 +114,10 @@ LLM：Large language model 大语言模型
 ### 多模态大语言模型领域
 
 近两年指令微调不仅在LLM领域，在多模态领域也是一大热点，经过探究和实验，许多学者认为，指令调优意在对齐模型的内部知识，让模型学会回答，这才是指令调优提升模型能力的重点，所以经过浓缩后的指令调优数据集可能仅有几千条，但是足以提升模型的能力。
- 
+
+1、MULTIINSTRUCT从现有的21个视觉语言数据集中构造了10类任务，具体包括62个任务，并手工为每类任务设计5个指令模板，文章还探究使用纯语言指令数据(NATURAL INSTRUCTIONS)结合MULTIINSTRUCT的微调效果。62个任务中有34个任务是从现有数据集获取的，剩下的28个任务通过从现有任务进行改写生成，例如区域描述任务可以改写为根据描述选择对应区域和根据区域选择对应描述。针对每个任务，生成5000-5M个实例，每个实例随机使用5个任务模板中的一个。实验结果表明，经过微调的OFA模型的多模态zero-shot能力大幅提升，首先在纯文本指令数据集NATURAL INSTRUCTIONS上微调，再在MULTIINSTRUCT数据上微调，可以获得表现最优的模型。消融实验表明：1、与FLAN类似，通过逐步增加视觉指令微调数据的种类和数量，模型的效果会越来越好，2、仅使用文本指令微调会降低模型的视觉理解能力，原因是模型对视觉标记的关注减少。
+<img width="552" alt="image" src="https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/6ce93287-a37d-41ec-8a4a-e9eca847251b">
+
+<br />https://arxiv.org/pdf/2212.10773.pdf  MULTIINSTRUCT: Improving Multi-Modal Zero-Shot Learning via Instruction Tuning
+
+2、
