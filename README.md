@@ -119,10 +119,35 @@ LLM：Large language model 大语言模型
 <img width="552" alt="image" src="https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/6ce93287-a37d-41ec-8a4a-e9eca847251b">
 
 <br />https://arxiv.org/pdf/2212.10773.pdf   MULTIINSTRUCT: Improving Multi-Modal Zero-Shot Learning via Instruction Tuning
+<br />https://github.com/VT-NLP/MultiInstruct
 
 2、LLaVA模型在158K的IFT数据集上进行微调，数据来源为现有的视觉描述数据集，将其中的图片描述+图像(将图像转换为由文本表示的Context，文章采用了两种Context，一种是图片描述，另一种是box以及对应物体的种类。)等信息以文本格式输入GPT-4或者Chatgpt，让他们生成对应的问题和回答，指令手工制作，但是格式和内容十分简单，基本是围绕详细描述一下图片中的内容这种话制定的。
 
 <br />https://arxiv.org/pdf/2304.08485.pdf     Visual Instruction Tuning
+<br />https://github.com/haotian-liu/LLaVA/blob/main/docs/Data.md
 
-3、
+3、M3IT数据集有40个数据集，包括240万个实例和400个手工编写的任务说明(每个数据集对应10个)，涵盖多样化的任务，包括字幕生成、视觉问答（VQA）、视觉条件生成、推理和分类。对使用图像特定区域的任务，将box注释直接在图像上用红色框标出，并使用Chatgpt改写VQA数据集中的的较短回答，测量指令数据之间的距离，确保指令多样性。最后通过人工筛查选出完整有效的数据。数据集格式为：图像(base64编码)，指令(从10个中随机选一个)，输入，输出，元数据(图像id,wikipedia_id等)。经上述数据集微调的模型展现出强大的zero-shot能力。
 
+<img width="453" alt="image" src="https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/9f08eb23-e9e8-4b9a-a492-fcf7e048d421">
+
+<br />https://doi.org/10.48550/arXiv.2306.04387    M3IT: A Large-Scale Dataset towards Multi-Modal Multilingual Instruction Tuning
+<br />https://huggingface.co/datasets/MMInstruction/M3IT
+
+4、VIGC生成的数据集，MLLM自动生成的首个多模态微调数据集，包括36,781个VIGC-LLaVA COCO和约180万个VIGC-LLaVA Objects365。VIGC借助了LLM中self-instruct的思想，通过多模态模型自身来生成指令。具体做法：首先在已有的Instrcution finetune数据集(llava150k和 OKVQA，A-OKVQA)上进行的训练得到一个能够根据给定图像生成对话的模型VIGC(包括生成和矫正)，然后再使用COCO和obj365作为图像数据集生成对应的指令微调数据。实验表明在生成的高质量数据上进行微调可以提升模型的泛化性能。
+
+<br />https://arxiv.org/pdf/2308.12714.pdf     VIGC: Visual Instruction Generation and Correction
+<br />[https://opendatalab.github.io/VIGC/](https://opendatalab.com/OpenDataLab/VIGC-InstData)
+
+5、Vision-Flan，最大的人工注释的视觉IFT数据集，包含来自101个开源计算机视觉数据集的200多个多样化的视觉-语言任务。每个任务都配备有专家编写的说明和精心设计的输入和输出模板。该数据集涵盖了诸如图像字幕生成、视觉问答和视觉理解等各种任务。
+
+<br />https://arxiv.org/abs/2402.11690     Vision-flan: Scaling human-labeled  tasks in visual instruction tuning
+<br />https://vision-flan.github.io/
+
+6、LAMM是一个全面的多模态指导调整数据集，用于2D图像和3D点云的理解。该数据集包含了18.6万个语言-图像指令响应对，以及1万个语言-点云指令响应对。作者从公开可用的数据集中收集图像和点云，并使用GPT-API和自指令方法根据这些数据集的原始标签生成指令和响应。LAMM数据集还包括了用于常识知识问答的数据对，通过将来自Bamboo数据集和相应的维基百科描述的分层知识图标签系统结合起来。
+
+<br />https://arxiv.org/pdf/2306.06687.pdf    LAMM:Language-Assisted Multi-Modal Instruction-Tuning Dataset, Framework, and
+ Benchmark
+ <br />https://github.com/OpenGVLab/LAMM
+
+
+ https://github.com/FreedomIntelligence/ALLaVA      ALLAVA: HARNESSING GPT4V-SYNTHESIZED DATA FOR A LITE VISION-LANGUAGE MODEL
