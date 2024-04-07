@@ -136,18 +136,28 @@ LLM：Large language model 大语言模型
 4、VIGC生成的数据集，MLLM自动生成的首个多模态微调数据集，包括36,781个VIGC-LLaVA COCO和约180万个VIGC-LLaVA Objects365。VIGC借助了LLM中self-instruct的思想，通过多模态模型自身来生成指令。具体做法：首先在已有的Instrcution finetune数据集(llava150k和 OKVQA，A-OKVQA)上进行的训练得到一个能够根据给定图像生成对话的模型VIGC(包括生成和矫正)，然后再使用COCO和obj365作为图像数据集生成对应的指令微调数据。实验表明在生成的高质量数据上进行微调可以提升模型的泛化性能。
 
 <br />https://arxiv.org/pdf/2308.12714.pdf     VIGC: Visual Instruction Generation and Correction
-<br />[https://opendatalab.github.io/VIGC/](https://opendatalab.com/OpenDataLab/VIGC-InstData)
+<br />https://opendatalab.github.io/VIGC/
 
-5、Vision-Flan，最大的人工注释的视觉IFT数据集，包含来自101个开源计算机视觉数据集的200多个多样化的视觉-语言任务。每个任务都配备有专家编写的说明和精心设计的输入和输出模板。该数据集涵盖了诸如图像字幕生成、视觉问答和视觉理解等各种任务。
-
-<br />https://arxiv.org/abs/2402.11690     Vision-flan: Scaling human-labeled  tasks in visual instruction tuning
-<br />https://vision-flan.github.io/
-
-6、LAMM是一个全面的多模态指导调整数据集，用于2D图像和3D点云的理解。该数据集包含了18.6万个语言-图像指令响应对，以及1万个语言-点云指令响应对。作者从公开可用的数据集中收集图像和点云，并使用GPT-API和自指令方法根据这些数据集的原始标签生成指令和响应。LAMM数据集还包括了用于常识知识问答的数据对，通过将来自Bamboo数据集和相应的维基百科描述的分层知识图标签系统结合起来。
+5、LAMM是一个全面的多模态指导调整数据集，用于2D图像和3D点云的理解。该数据集包含了18.6万个语言-图像指令响应对，以及1万个语言-点云指令响应对。作者从公开可用的数据集中收集图像和点云，并使用GPT-API和自指令方法根据这些数据集的原始标签生成指令和响应。LAMM数据集还包括了用于常识知识问答的数据对，通过将来自Bamboo数据集和相应的维基百科描述的分层知识图标签系统结合起来。
 
 <br />https://arxiv.org/pdf/2306.06687.pdf    LAMM:Language-Assisted Multi-Modal Instruction-Tuning Dataset, Framework, and
  Benchmark
  <br />https://github.com/OpenGVLab/LAMM
 
+6、LLaVA-1.5所使用的微调数据，公开可用，详细信息如下。ALLAVA中也使用了该数据进行微调。
+ <img width="393" alt="image" src="https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/cc3281b7-7f9d-460a-8f3b-7be933e302db">
+<br />https://arxiv.org/abs/2310.03744      Improved Baselines with Visual Instruction Tuning
+<br />https://llava-vl.github.io/
+ 
+7、shareGPT-4V, 首先将10万张图像输入GPT-4V，生成高质量的图像文本数据，使用这些数据训练一个share-Captioner,然后将收集的120万张图像输入share-Captioner生成高质量图文数据集，从而得到120万高质量的图像文本数据，使用该数据训练的模型效果要优于原有模型，如LLaVA-7B，LLaVA-1.5-7B, LLaVA-1.5-13B, Qwen-VL-Chat-7B。最后使用该数据训练一个shareGPT-4V-7B，并在同类型模型中性能最佳。
+<br />https://arxiv.org/abs/2311.12793     ShareGPT4V: Improving Large Multi-Modal Models with Better Captions
+<br />https://sharegpt4v.github.io/
 
- https://github.com/FreedomIntelligence/ALLaVA      ALLAVA: HARNESSING GPT4V-SYNTHESIZED DATA FOR A LITE VISION-LANGUAGE MODEL
+8、Vision-Flan，最大的人工注释的视觉IFT数据集，包含来自101个开源计算机视觉数据集的200多个多样化的视觉-语言任务。每个任务都配备有专家编写的说明和精心设计的输入和输出模板。该数据集涵盖了诸如图像字幕生成、视觉问答和视觉理解等各种任务。
+
+<br />https://arxiv.org/abs/2402.11690     Vision-flan: Scaling human-labeled  tasks in visual instruction tuning
+<br />https://vision-flan.github.io/
+
+9、现有数据如Vision-FLAN的指令过于简单，但是一般来说，越复杂的指令越能够提升模型的指令跟随能力，本文考虑从现有图像出发，使用GPT-4V重新构造数据集，图片数据源来自Vision-FLAN和LAION，将图像输入GPT-4V，首先提示其生成完整的图像描述，然后根据图像描述和对应图片生成一个问题和对应的答案。在提示中要求GPT-4V生成的指令复杂，问题多样，以及回答详细。使用3B左右的参数和高质量的数据，训练的模型在各种任务上表现很好，甚至可以和7B，13B的一些模型相媲美。
+<br />https://doi.org/10.48550/arXiv.2402.11684    ALLAVA: HARNESSING GPT4V-SYNTHESIZED DATA FOR A LITE VISION-LANGUAGE MODEL
+<br />https://github.com/FreedomIntelligence/ALLaVA
