@@ -32,7 +32,7 @@ LLM：Large language model 大语言模型
 ### LLM领域
 
 #### IFT原理探究
-1、或许你曾经听过FLAN(finetune language net)，谷歌在本文中首次提出Instruction tuning，文章将指令微调后的137B的模型和175B的GPT-3进行了比较，证明了指令微调的优越性。文章使用62个文本数据集，划分为12个类别，对于每个数据集，文章手工构建了10个独特的模板，这些模板使用自然语言instructions 来描述该数据集的任务。这10个模板中的大多数描述了原始任务，但为了增加多样性，对于每个数据集，还包括最多三个“turned the task around”的模板（例如，对于情感分类，要求生成电影评论的模板，可以增加指令多样性）。然后，将所有数据集混合后，对预训练语言模型做instruction tuning，其中每个数据集的template都是随机选取的。对比实验表明，实验1、任务类别越多，微调效果越好，也就是指令越多样，效果越好。实验2、模型size越大，效果越好，小模型进行微调可能会降低性能。实验3、主要研究instruction本身的设定对tuning的作用。模型效果变好的一种可能是任务量比较多，fine-tuning过程即使不加instruction也能达到很好的效果。本文设计了两种不带有instruction的fine-tuning模式作对比，一种是no template，只提供给模型输入和输出。另一种是dataset name，它在输入前面拼接上task和数据集名称。对比结果表明带有指令的数据微调效果比no template高18个点，比dataset name高8个点。
+1、FLAN(finetune language net)，谷歌在本文中首次提出Instruction tuning，文章将指令微调后的137B的模型和175B的GPT-3进行了比较，证明了指令微调的优越性。文章使用62个文本数据集，划分为12个类别，对于每个数据集，文章手工构建了10个独特的模板，这些模板使用自然语言instructions 来描述该数据集的任务。这10个模板中的大多数描述了原始任务，但为了增加多样性，对于每个数据集，还包括最多三个“turned the task around”的模板（例如，对于情感分类，要求生成电影评论的模板，可以增加指令多样性）。然后，将所有数据集混合后，对预训练语言模型做instruction tuning，其中每个数据集的template都是随机选取的。对比实验表明，实验1、任务类别越多，微调效果越好，也就是指令越多样，效果越好。实验2、模型size越大，效果越好，小模型进行微调可能会降低性能。实验3、主要研究instruction本身的设定对tuning的作用。模型效果变好的一种可能是任务量比较多，fine-tuning过程即使不加instruction也能达到很好的效果。本文设计了两种不带有instruction的fine-tuning模式作对比，一种是no template，只提供给模型输入和输出。另一种是dataset name，它在输入前面拼接上task和数据集名称。对比结果表明带有指令的数据微调效果比no template高18个点，比dataset name高8个点。
 
 <br />数据：手工设计模板，从现有数据集根据模板进行转换，数据量很大。
 <br />https://arxiv.org/pdf/2109.01652.pdf  Finetuned Language Models are Zero-Shot Learners
@@ -42,7 +42,7 @@ LLM：Large language model 大语言模型
 <br />数据：手工构造，数据量很大，CoT数据为人工编写。
 <br />https://doi.org/10.48550/arXiv.2210.11416   Scaling Instruction-Finetuned Language Models
 
-3、有没有想过为什么指令微调效果会变好呢，这篇文章给出了一些定量分析，从token的偏移角度出发，对比微调后的模型和微调前的模型的回答的token分布，发现token会产生%5-8%左右的偏移(使用的模型为 Llama-2-7b -> Llama-2-7b-chat,  Llama-2-7b -> Vicuna-7b-v1.5, Mistral-7b -> Mistral-7b-instruct), 而且产生偏移的多数都是风格token，比如however, if这种词汇，会让模型的回答更加流畅和清晰，而模型回答中的关键词汇和信息，是模型本身经过预训练以后就具有的，也就是base模型和chat模型(tuned)产生的回答中关键信息一致，很有趣，所以这篇文章使用ICL作为提示+系统提示来代替指令微调。  
+3、指令微调如何提升模型性能呢，这篇文章给出了一些定量分析，从token的偏移角度出发，对比微调后的模型和微调前的模型的回答的token分布，发现token会产生%5-8%左右的偏移(使用的模型为 Llama-2-7b -> Llama-2-7b-chat,  Llama-2-7b -> Vicuna-7b-v1.5, Mistral-7b -> Mistral-7b-instruct), 而且产生偏移的多数都是风格token，比如however, if这种词汇，会让模型的回答更加流畅和清晰，而模型回答中的关键词汇和信息，是模型本身经过预训练以后就具有的，也就是base模型和chat模型(tuned)产生的回答中关键信息一致，很有趣，所以这篇文章使用ICL作为提示+系统提示来代替指令微调。  
 
 <br />数据：手工构造，本文ICL数据的构造步骤较为繁琐。
 <br />https://arxiv.org/abs/2312.01552   The Unlocking Spell on Base LLMs: Rethinking Alignment via In-Context Learning
