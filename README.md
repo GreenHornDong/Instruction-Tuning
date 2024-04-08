@@ -1,4 +1,4 @@
-# Instruction-Tuning
+<img width="575" alt="image" src="https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/46121d96-1306-4bca-88f4-4a20c41ba9fa"># Instruction-Tuning
 
 ## 主要内容
 本仓库记录学习几年来在LLM领域(以及多模态大模型领域)的指令微调相关知识，指令微调(instruction finetuning)，又作指令调优(instruction tuning)，指令跟随(instruction following)。
@@ -166,17 +166,44 @@ LLM：Large language model 大语言模型
 
 
 #### 小模型(size ~3B)
-1、现有数据如Vision-FLAN的指令过于简单，但是一般来说，越复杂的指令越能够提升模型的指令跟随能力，本文考虑从现有图像出发，使用GPT-4V重新构造数据集，图片数据源来自Vision-FLAN和LAION，将图像输入GPT-4V，首先提示其生成完整的图像描述，然后根据图像描述和对应图片生成一个问题和对应的答案。在提示中要求GPT-4V生成的指令复杂，问题多样，以及回答详细。使用3B左右的参数和高质量的数据，训练的模型在各种任务上表现很好，甚至可以和7B，13B的一些模型相媲美。
-<br />https://doi.org/10.48550/arXiv.2402.11684    ALLAVA: HARNESSING GPT4V-SYNTHESIZED DATA FOR A LITE VISION-LANGUAGE MODEL
-<br />https://github.com/FreedomIntelligence/ALLaVA
+微软发布的Phi-2，声称其性能可以超过25倍其大小的大型语言模型，并在13B及以下的语言模型中取得了SOTA效果，这可能带动了MLLM领域对小型模型的探索。因为之前的一些预训练LLM最少也是7B才能有较为优秀的能力。
 
-2、3B左右的模型Imp，使用和LLaVA1.5一致的训练数据，558K的LCS预训练数据(blip_laion_cc_sbu_558k)和665K的指令微调数据(llava_v1_5_mix665k)，模型架构为 Phi-2(2.7B) + SigLIP(0.4B)。模型效果如下：
+1、LLaVA-Phi，模型架构为Phi2 + MLP + CLIP ViT-L/14(336)，首先将Phi2在shareGPT上进行微调，以增强语言模型能力，然后使用CC-595K对LLaVA-Phi进行预训练，最后使用LLaVA-Instruct-150K进行指令微调，模型效果可以媲美7B模型。
+<img width="641" alt="image" src="https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/a80736cf-188f-4a34-8d25-b2c90a4cb2e3">
+
+<br />https://doi.org/10.48550/arXiv.2401.02330      LLaVA-Phi: Efficient Multi-Modal Assistant with Small Language Model
+<br />https://github.com/zhuyiche/llava-phi
+
+2、TinyGPT-V，模型架构为Phi2 + Q-former + EVA，使用大量数据进行预训练和指令微调，共计四个阶段，前三个阶段使用图像分辨率为224，第四阶段使用图像分辨率为448。超越LLaVA-Phi，并与许多7B，13B模型相媲美。
+<br />训练数据如下：
+<img width="638" alt="image" src="https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/c35d28cd-9139-4c3d-8d58-3669950dd7bc">
+<br />实验结果如下：
+<img width="632" alt="image" src="https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/9648dec6-4c41-48b9-bc55-c043473005a5">
+
+
+3、3B左右的模型Imp，使用和LLaVA1.5一致的训练数据，558K的LCS预训练数据(blip_laion_cc_sbu_558k)和665K的指令微调数据(llava_v1_5_mix665k)，模型架构为 Phi-2(2.7B) + SigLIP(0.4B)。模型效果如下，在许多基准上超越LLaVA-1.5-lora-7B，以及同规模的模型TinyGPT-V，LLaVA-Phi，MobileVLM(主要为移动设备设计)， MC-LLaVA：
 <img width="628" alt="image" src="https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/f4777eef-e157-45ac-a55a-6331ffa5493c">
 
-@misc{imp2024,
-  author = {Shao, Zhenwei and Ouyang, Xuecheng and Gai, Zhenbiao and Yu, Zhou and Yu, Jun},
-  title = {Imp: An emprical study of multimodal small language models},
-  year = {2024},
-  url = {https://huggingface.co/MILVLG/imp-v1-3b}
-}
-<br />https://github.com/MILVLG/imp/tree/main
+<br />https://github.com/MILVLG/imp/tree/main  2024.02
+
+4、现有数据如Vision-FLAN的指令过于简单，但是一般来说，越复杂的指令越能够提升模型的指令跟随能力，本文考虑从现有图像出发，使用GPT-4V重新构造数据集，图片数据源来自Vision-FLAN和LAION，将图像输入GPT-4V，首先提示其生成完整的图像描述，然后根据图像描述和对应图片生成一个问题和对应的答案。在提示中要求GPT-4V生成的指令复杂，问题多样，以及回答详细。使用3B左右的参数和高质量的数据，训练的模型在各种任务上表现很好，甚至可以和7B，13B的一些模型相媲美。ALLAVA模型架构为Phi2 + projector + CLIP-ViT-L/14
+
+<br />训练数据如下，数据量较大，训练阶段复杂：
+<img width="575" alt="image" src="https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/fe43aa20-80b8-42cc-8879-e5b13f506eae">
+<br />模型效果如下：
+<img width="781" alt="image" src="https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/700d467c-7117-4e48-b34f-1a975efbecfd">
+
+<br />https://doi.org/10.48550/arXiv.2402.11684    ALLAVA: HARNESSING GPT4V-SYNTHESIZED DATA FOR A LITE VISION-LANGUAGE MODEL
+<br />https://github.com/FreedomIntelligence/ALLaVA   2024.02  
+
+5、Bunny 3B，语言模型可以在Phi-1.5(1.3B), StableLM-2(1.6B), Phi-2(2.7B)中任意选择，视觉编码器可以在SigLIP和EVA CLIP中任意选择，使用两层 MLP+GELU 作为投影层，最终的模型选择SigLIP-SO和Phi-2，打败当前几乎所有3B多模态模型，并超越7B和13B模型。训练数据：预训练数据为从LAION-2B中筛选的2M数据，微调数据选择SVIT-mix-665K并将其中的ShareGPT-40K替换为WizardLM-evol-instruct-70K。
+<br />模型效果如下：
+<img width="799" alt="image" src="https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/c3c86cd0-e75f-49aa-9259-9687a306f2aa">
+
+文章中提到他们所选择的数据来自一个visual instruction tuning data数据集合，包含20个公开数据集，链接为https://github.com/BAAI-DCAI/DataOptim。
+
+<br />https://doi.org/10.48550/arXiv.2402.11530    Efficient Multimodal Learning from Data-centric Perspective
+<br />https://github.com/BAAI-DCAI/Bunny
+
+
+
