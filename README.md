@@ -32,7 +32,7 @@ LLM：Large language model 大语言模型
 ### LLM领域
 
 #### IFT原理探究
-1、FLAN(finetune language net)，谷歌在本文中首次提出Instruction tuning，文章将指令微调后的137B的模型和175B的GPT-3进行了比较，证明了指令微调的优越性。文章使用62个文本数据集，划分为12个类别，对于每个数据集，文章手工构建了10个独特的模板，这些模板使用自然语言instructions 来描述该数据集的任务。这10个模板中的大多数描述了原始任务，但为了增加多样性，对于每个数据集，还包括最多三个“turned the task around”的模板（例如，对于情感分类，要求生成电影评论的模板，可以增加指令多样性）。然后，将所有数据集混合后，对预训练语言模型做instruction tuning，其中每个数据集的template都是随机选取的。对比实验表明，实验1、任务类别越多，微调效果越好，也就是指令越多样，效果越好。实验2、模型size越大，效果越好，小模型进行微调可能会降低性能。实验3、主要研究instruction本身的设定对tuning的作用。模型效果变好的一种可能是任务量比较多，fine-tuning过程即使不加instruction也能达到很好的效果。本文设计了两种不带有instruction的fine-tuning模式作对比，一种是no template，只提供给模型输入和输出。另一种是dataset name，它在输入前面拼接上task和数据集名称。对比结果表明带有指令的数据微调效果比no template高18个点，比dataset name高8个点。
+1、FLAN(finetune language net)，谷歌在本文中首次提出Instruction tuning，文章将指令微调后的137B的模型和175B的GPT-3进行了比较，证明了指令微调的优越性。文章使用62个文本数据集，划分为12个类别，对于每个数据集，文章手工构建了10个独特的模板，这些模板使用自然语言instructions 来描述该数据集的任务。这10个模板中的大多数描述了原始任务，但为了增加多样性，对于每个数据集，还包括最多三个“turned the task around”的模板（例如，对于情感分类，要求生成电影评论的模板，可以增加指令多样性）。然后，将所有数据集混合后，对预训练语言模型做instruction tuning，其中每个数据集的template都是随机选取的。对比实验表明，实验1、任务类别越多，微调效果越好，也就是指令越多样，效果越好。实验2、模型size越大，效果越好，小模型进行微调可能会降低性能。实验3、主要研究instruction本身的设定对tuning的作用。模型效果变好的一种可能是任务量比较多，fine-tuning过程即使不加instruction，在大量数据训练后也能达到很好的效果。本文设计了两种不带有instruction的fine-tuning模式作对比，一种是no template，只提供给模型输入和输出。另一种是dataset name，它在输入前面拼接上task和数据集名称。对比结果表明带有指令的数据微调效果比no template高18个点，比dataset name高8个点。
 
 <br />数据：手工设计模板，从现有数据集根据模板进行转换，数据量很大。
 <br />https://arxiv.org/pdf/2109.01652.pdf  Finetuned Language Models are Zero-Shot Learners
