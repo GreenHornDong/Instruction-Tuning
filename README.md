@@ -169,6 +169,7 @@ LLM：Large language model 大语言模型
 微软发布的Phi-2，声称其性能可以超过25倍其大小的大型语言模型，并在13B及以下的语言模型中取得了SOTA效果，这可能带动了MLLM领域对小型模型的探索。因为之前的一些预训练LLM最少也是7B才能有较为优秀的能力。
 
 1、LLaVA-Phi，模型架构为Phi2 + MLP + CLIP ViT-L/14(336)，首先将Phi2在shareGPT上进行微调，以增强语言模型能力，然后使用CC-595K对LLaVA-Phi进行预训练，最后使用LLaVA-Instruct-150K进行指令微调，模型效果可以媲美7B模型。
+<br />模型效果如下：
 <img width="641" alt="image" src="https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/a80736cf-188f-4a34-8d25-b2c90a4cb2e3">
 
 <br />https://doi.org/10.48550/arXiv.2401.02330      LLaVA-Phi: Efficient Multi-Modal Assistant with Small Language Model
@@ -177,11 +178,12 @@ LLM：Large language model 大语言模型
 2、TinyGPT-V，模型架构为Phi2 + Q-former + EVA，使用大量数据进行预训练和指令微调，共计四个阶段，前三个阶段使用图像分辨率为224，第四阶段使用图像分辨率为448。超越LLaVA-Phi，并与许多7B，13B模型相媲美。
 <br />训练数据如下：
 <img width="638" alt="image" src="https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/c35d28cd-9139-4c3d-8d58-3669950dd7bc">
-<br />实验结果如下：
+<br />模型效果如下：
 <img width="632" alt="image" src="https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/9648dec6-4c41-48b9-bc55-c043473005a5">
 
 
-3、3B左右的模型Imp，使用和LLaVA1.5一致的训练数据，558K的LCS预训练数据(blip_laion_cc_sbu_558k)和665K的指令微调数据(llava_v1_5_mix665k)，模型架构为 Phi-2(2.7B) + SigLIP(0.4B)。模型效果如下，在许多基准上超越LLaVA-1.5-lora-7B，以及同规模的模型TinyGPT-V，LLaVA-Phi，MobileVLM(主要为移动设备设计)， MC-LLaVA：
+3、3B左右的模型Imp，使用和LLaVA1.5一致的训练数据，558K的LCS预训练数据(blip_laion_cc_sbu_558k)和665K的指令微调数据(llava_v1_5_mix665k)，模型架构为 Phi-2(2.7B) + SigLIP(0.4B)。模型效果如下，在许多基准上超越LLaVA-1.5-lora-7B，以及同规模的模型TinyGPT-V，LLaVA-Phi，MobileVLM(主要为移动设备设计)， MC-LLaVA。
+<br />模型效果如下：
 <img width="628" alt="image" src="https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/f4777eef-e157-45ac-a55a-6331ffa5493c">
 
 <br />https://github.com/MILVLG/imp/tree/main  2024.02
