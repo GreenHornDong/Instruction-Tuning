@@ -119,6 +119,8 @@ LLM：Large language model 大语言模型
 
 近两年指令微调不仅在LLM领域，在多模态领域也是一大热点，经过探究和实验，许多学者认为，指令调优意在对齐模型的内部知识，让模型学会回答，这才是指令调优提升模型能力的重点，所以经过浓缩后的指令调优数据集可能仅有几千条，但是足以提升模型的能力。
 
+
+#### 大模型(size >= 7B)
 1、MULTIINSTRUCT从现有的21个视觉语言数据集中构造了10类任务，具体包括62个任务，并手工为每类任务设计5个指令模板，文章还探究使用纯语言指令数据(NATURAL INSTRUCTIONS)结合MULTIINSTRUCT的微调效果。62个任务中有34个任务是从现有数据集获取的，剩下的28个任务通过从现有任务进行改写生成，例如区域描述任务可以改写为根据描述选择对应区域和根据区域选择对应描述。针对每个任务，生成5000-5M个实例，每个实例随机使用5个任务模板中的一个。实验结果表明，经过微调的OFA模型的多模态zero-shot能力大幅提升，首先在纯文本指令数据集NATURAL INSTRUCTIONS上微调，再在MULTIINSTRUCT数据上微调，可以获得表现最优的模型。消融实验表明：1、与FLAN类似，通过逐步增加视觉指令微调数据的种类和数量，模型的效果会越来越好，2、仅使用文本指令微调会降低模型的视觉理解能力，原因是模型对视觉标记的关注减少。
 <img width="552" alt="image" src="https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/6ce93287-a37d-41ec-8a4a-e9eca847251b">
 
@@ -162,6 +164,19 @@ LLM：Large language model 大语言模型
 <br />https://arxiv.org/abs/2402.11690     Vision-flan: Scaling human-labeled  tasks in visual instruction tuning
 <br />https://vision-flan.github.io/
 
-9、现有数据如Vision-FLAN的指令过于简单，但是一般来说，越复杂的指令越能够提升模型的指令跟随能力，本文考虑从现有图像出发，使用GPT-4V重新构造数据集，图片数据源来自Vision-FLAN和LAION，将图像输入GPT-4V，首先提示其生成完整的图像描述，然后根据图像描述和对应图片生成一个问题和对应的答案。在提示中要求GPT-4V生成的指令复杂，问题多样，以及回答详细。使用3B左右的参数和高质量的数据，训练的模型在各种任务上表现很好，甚至可以和7B，13B的一些模型相媲美。
+
+#### 小模型(size ~3B)
+1、现有数据如Vision-FLAN的指令过于简单，但是一般来说，越复杂的指令越能够提升模型的指令跟随能力，本文考虑从现有图像出发，使用GPT-4V重新构造数据集，图片数据源来自Vision-FLAN和LAION，将图像输入GPT-4V，首先提示其生成完整的图像描述，然后根据图像描述和对应图片生成一个问题和对应的答案。在提示中要求GPT-4V生成的指令复杂，问题多样，以及回答详细。使用3B左右的参数和高质量的数据，训练的模型在各种任务上表现很好，甚至可以和7B，13B的一些模型相媲美。
 <br />https://doi.org/10.48550/arXiv.2402.11684    ALLAVA: HARNESSING GPT4V-SYNTHESIZED DATA FOR A LITE VISION-LANGUAGE MODEL
 <br />https://github.com/FreedomIntelligence/ALLaVA
+
+2、3B左右的模型Imp，使用和LLaVA1.5一致的训练数据，558K的LCS预训练数据(blip_laion_cc_sbu_558k)和665K的指令微调数据(llava_v1_5_mix665k)，模型架构为 Phi-2(2.7B) + SigLIP(0.4B)。模型效果如下：
+<img width="628" alt="image" src="https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/f4777eef-e157-45ac-a55a-6331ffa5493c">
+
+@misc{imp2024,
+  author = {Shao, Zhenwei and Ouyang, Xuecheng and Gai, Zhenbiao and Yu, Zhou and Yu, Jun},
+  title = {Imp: An emprical study of multimodal small language models},
+  year = {2024},
+  url = {https://huggingface.co/MILVLG/imp-v1-3b}
+}
+<br />https://github.com/MILVLG/imp/tree/main
