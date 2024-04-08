@@ -207,5 +207,12 @@ LLM：Large language model 大语言模型
 <br />https://doi.org/10.48550/arXiv.2402.11530    Efficient Multimodal Learning from Data-centric Perspective
 <br />https://github.com/BAAI-DCAI/Bunny
 
+| 模型       | 架构                               | 预训练数据                             | 微调数据             | 排名 |
+|------------|------------------------------------|----------------------------------------|----------------------|------|
+| LLaVA-Phi  | Phi2 + MLP + CLIP ViT-L/14(336)   | CC-595K                                | LLaVA-Instruct-150K | 4    |
+| TinyGPT-V  | Phi2 + Q-former + EVA             | 当前几乎多模态领域各种开源数据的集合 |                      | 3    |
+| Imp-vl     | Phi2 + projector + SigLIP         | blip_laion_cc_sbu_558k                 | LLaVA_v1_5_mix665k  | 2    |
+| ALLAVA     | Phi2 + projector + CLIP-ViT-L/14  | Vision-FLAN和LAION的图，输入GPT4V生成数据，量大|                | 2    |
+| Bunny 3B   | Phi2 + SigLIP-SO                   | 从LAION2B筛选的2M数据                  | SVIT-mix-665K(少许替换) | 1    |
 
 
