@@ -127,7 +127,7 @@ LLM：Large language model 大语言模型
 <br />https://arxiv.org/pdf/2212.10773.pdf   MULTIINSTRUCT: Improving Multi-Modal Zero-Shot Learning via Instruction Tuning
 <br />https://github.com/VT-NLP/MultiInstruct
 
-2、LLaVA模型在158K的IFT数据集上进行微调，数据来源为现有的视觉描述数据集，将其中的图片描述+图像(将图像转换为由文本表示的Context，文章采用了两种Context，一种是图片描述，另一种是box以及对应物体的种类。)等信息以文本格式输入GPT-4或者Chatgpt，让他们生成对应的问题和回答，指令手工制作，但是格式和内容十分简单，基本是围绕详细描述一下图片中的内容这种话制定的。
+2、LLaVA模型在预训练阶段使用从CC3M筛选的图文对，并转成595K指令数据(单轮对话)，此阶段只训练projection layer；接着在158K的IFT数据集上进行微调，数据来源为现有的视觉描述数据集，将其中的图片描述+图像(将图像转换为由文本表示的Context，文章采用了两种Context，一种是图片描述，另一种是box以及对应物体的种类。)等信息以文本格式输入GPT-4或者Chatgpt，让他们生成对应的问题和回答(手工制作一些种子数据，并使用ICL提示大模型生成新数据)，指令手工制作，但是格式和内容十分简单，基本是围绕详细描述一下图片中的内容这种话制定的，在微调阶段训练projection layer+LLM。
 
 <br />https://arxiv.org/pdf/2304.08485.pdf     Visual Instruction Tuning
 <br />https://github.com/haotian-liu/LLaVA/blob/main/docs/Data.md
