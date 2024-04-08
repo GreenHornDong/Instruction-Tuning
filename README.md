@@ -1,4 +1,4 @@
-<img width="575" alt="image" src="https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/46121d96-1306-4bca-88f4-4a20c41ba9fa"># Instruction-Tuning
+# Instruction-Tuning
 
 ## 主要内容
 本仓库记录学习几年来在LLM领域(以及多模态大模型领域)的指令微调相关知识，指令微调(instruction finetuning)，又作指令调优(instruction tuning)，指令跟随(instruction following)。
