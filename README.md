@@ -83,7 +83,7 @@ LLM和MLLM在预训练阶段获取了足够的知识，但是在使用的时候�
 #### IFT数据
 指令微调数据集有很多，如
 <br />Alpaca(https://github.com/tatsu-lab/stanford_alpaca), 
-<br />使用self-Instruct的方式生成数据，self-Instruct介绍见下文，数据生成模型使用OpenAI’s text-davinci-003，生成52K的IFT数据
+<br />使用self-Instruct的方式生成数据，数据生成模型使用OpenAI’s text-davinci-003，生成52K的IFT数据
 <br />Dolly(https://www.databricks.com/blog/2023/04/12/dolly-first-open-commercially-viable-instruction-tuned-llm)
 <br />dolly-15k是由5000多名Databricks员工在2023年3月和4月期间手工创建的。包括开放式问答，封闭式问答，信息提取，总结，头脑风暴，分类和创造性写作。
 <br />HC3(https://github.com/Hello-SimpleAI/chatgpt-comparison-detection)
