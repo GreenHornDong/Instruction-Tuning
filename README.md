@@ -9,16 +9,17 @@ LLM：Large language model 大语言模型
 <br />ICL：In context learning 上下文学习
 <br />FT：Finetune 微调
 <br />IFT：Instruction finetune 指令微调
+<br />CoT：Chain of thought 思维链
 
 ## 什么是指令微调
-大语言模型和多模态大语言模型在下游任务上的性能，可以通过在指定任务上进行微调(fientune)提升，或者给定少量提示来增强模型回答的流畅度和准确度，也叫做few-shot prompt，不同于few-shot prompt， 这种方式下模型的参数完全不更新，因此又叫做In context learning(上下文学习)，指令微调是为了让模型能够理解人类指令，在不给出提示的情况下，增强模型的zero-shot能力的一种方式，比如，你可以在许多任务上进行指令微调，在其他任务上(unseen, 模型未见过)进行测试，你会发现模型的理解能力有所提升，可以给出更好的答案。
+大语言模型和多模态大语言模型在下游任务上的性能，可以通过在指定任务上进行微调(fientune)提升，指令微调是为了让模型能够理解人类指令，在不给出提示的情况下，增强模型的zero-shot能力的一种方式，比如，你可以在许多任务上进行指令微调，在其他任务上(unseen, 模型未见过)进行测试，你会发现模型的理解能力有所提升，可以给出更好的答案。与之相对应的一种方法是提示工程，或者给定少量提示来增强模型回答的流畅度和准确度，也叫做few-shot prompt，这种方式下模型的参数完全不更新，因此又叫做In context learning(上下文学习)。
 
-<br />换句话说，few-shot-prompt旨在使用的时候，给出几个样例，让模型知道应该怎么去回答，而IFT则是在预训练阶段以后，在构建的指令数据集上对模型进行微调，使用的时候模型会给出更好的回答。
+<br />换句话说，IFT是在预训练阶段以后的微调阶段，在构建的指令数据集上对模型进行微调，使用的时候模型会给出更好的回答。而few-shot-prompt是在使用的时候，给出几个样例，让模型知道应该怎么去回答。
 
 <br />假如你问模型1+2=?。
 
 <br />few-shot-prompt的问题格式一般是: 
-<br />Question: 1+3=? Aswer: 4  <br />Question: 2+3=? Aswer: 5  <br />Question: 1+2=?
+<br />Question: 1+3=? Answer: 4  <br />Question: 2+3=? Answer: 5  <br />Question: 1+2=?
 <br />然后模型给出回答，这里有两个样例，所以是2-shot
 
 <br />对于经过IFT的模型，直接问，Question: 1+2=?就可以。
@@ -26,7 +27,7 @@ LLM：Large language model 大语言模型
 ### 数据构成
 指令微调数据一般如下：
 <br />{###Insruction:...., ###Input:...., ###Answer:....} 
-<br />举个例子，问模型1+1等于几， 微调数据就是<br />{###Insruction:在接下来的input中，我给你两个数字，你能够告诉我两个数字的和吗, ###Input: 1，1, ###Answer: 2}。<br />以上就是一条微调数据，当然，你可以更换数据模板，比如不用Input，或者给一些提示(few-shot)，或者在答案中给出CoT, 也就是整个答案的推理过程。
+<br />举个例子，问模型1+1等于几， 微调数据就是<br />{###Insruction:在接下来的input中，我给你两个数字，你能够告诉我两个数字的和吗, ###Input: 1，1, ###Answer: 2}。<br />以上就是一条简单的微调数据，当然，我们可以更换数据集模板，比如省略Input，或者在Insruction部分给出系统提示，少量样例，以及在Answer中给出推理过程(CoT)。
 
 ## 经典论文
 ### LLM领域
