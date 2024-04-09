@@ -4,7 +4,7 @@
 本仓库记录学习几年来在LLM领域(以及多模态大模型领域)的指令微调相关知识，指令微调(instruction finetuning)，又作指令调优(instruction tuning)，指令跟随(instruction following)。
 
 ## 名词缩写
-LLM：Large language model 大语言模型
+<br />LLM：Large language model 大语言模型
 <br />MLLM：Multimodal large language model 多模态大语言模型
 <br />ICL：In context learning 上下文学习
 <br />FT：Finetune 微调
@@ -12,7 +12,7 @@ LLM：Large language model 大语言模型
 <br />CoT：Chain of thought 思维链
 
 ## 什么是指令微调
-大语言模型和多模态大语言模型在下游任务上的性能，可以通过在指定任务上进行微调(fientune)提升，指令微调是为了让模型能够理解人类指令，在不给出提示的情况下，增强模型的zero-shot能力的一种方式，比如，你可以在许多任务上进行指令微调，在其他任务上(unseen, 模型未见过)进行测试，你会发现模型的理解能力有所提升，可以给出更好的答案。与之相对应的一种方法是提示工程，或者给定少量提示来增强模型回答的流畅度和准确度，也叫做few-shot prompt，这种方式下模型的参数完全不更新，因此又叫做In context learning(上下文学习)。
+LLM和MLLM在预训练阶段获取了足够的知识，但是在使用的时候，有时并不能流畅的回答问题，因为人们提问的方式多种多样，而且其组织答案的能力并不优秀，有时给出的答案人类难以理解。在上述背景下，指令微调应运而生，LLM和MLLM在下游任务上的性能，可以通过在指定任务上进行微调(fientune)提升，指令微调是为了让模型能够理解人类指令，在不给出提示的情况下，增强模型的泛化能力的一种方式，比如，你可以在许多任务上进行指令微调，在其他任务上(unseen, 模型未见过)进行测试，你会发现模型的理解能力有所提升，可以给出更好的答案。与之相对应的一种方法是提示工程，或者给定少量提示来增强模型回答的流畅度和准确度，也叫做few-shot prompt，这种方式下模型的参数完全不更新，因此又叫做In context learning(上下文学习)。
 
 <br />换句话说，IFT是在预训练阶段以后的微调阶段，在构建的指令数据集上对模型进行微调，使用的时候模型会给出更好的回答。而few-shot-prompt是在使用的时候，给出几个样例，让模型知道应该怎么去回答。
 
