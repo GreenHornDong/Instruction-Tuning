@@ -62,6 +62,24 @@ LLM和MLLM在预训练阶段获取了足够的知识，但是在使用的时候�
 <br />数据：从已有数据集Alpaca 52K  WizardLM 70K  Dolly 15K挑选长文本数据
 <br />https://doi.org/10.48550/arXiv.2402.06094  Rethinking Data Selection for Supervised Fine-Tuning
 
+#### IFT数据生成
+1、self-Instruct，使用LLM自动生成指令数据，步骤如下：首先，手工设计了175个表示不同任务的指令，并且给每条数据都编写了（指令, 输入, 输出）/（指令, 输出），将这175条数据作为种子池。其次，使用模型生成新的指令(使用few-shot ICL方式)，对该模型生成的指令判断是否分类任务(prompt模板不同，这里也使用few-shot ICL方式)。然后，使用模型生成实例，对上述模型生成的数据进行过滤和后处理，将经过过滤和后处理的数据添加到种子池中，一直重复上述步骤。文章使用GPT-3进行生成数据，并以此数据微调GPT-3，结果表明相比于原始GPT-3，其能力大幅提升，甚至可以和Instrcut-GPT001媲美。
+
+<br />数据：从175个指令数据出发，使用GPT-3生成了52K的指令，82K的实例。
+<br />https://arxiv.org/pdf/2212.10560.pdf  Self-Instruct: Aligning Language Model with Self Generated Instructions
+<br />https://github.com/yizhongw/self-instruct
+
+2、使用Evol-Instruct方法生成指令数据集，使用所有生成的指令数据来对LLaMA-7B进行微调得到WizardLM。Evol-Instruct：从简单的初始指令“1+1=？”开始，随机选择In-depth Evolving或In-breadth Evolving将简单指令升级为更复杂的指令或创建一个新的指令（增加多样性）。In-depth Evolving包括五种操作：添加约束、加深、具体化、增加推理步骤和复杂化输入。In-breadth Evolving是突变，即根据给定的指令生成一个全新的指令。这六种操作通过提示ChaGPT来实现。由于演化后的指令是从LLMs生成的，采用一个指令消除器过滤失败的指令。重复这个演化过程几轮，以获取包含指令数据。对比实验表明Evol-Instruct生成的指令优于人类创建的指令。通过分析高复杂度部分的人类评估结果，证明了WizardLM模型的输出优于OpenAI ChatGPT的输出。在GPT-4的自动评估中，WizardLM在29个任务中的17个超过了ChatGPT的90%。
+
+<br />数据：从Alpaca训练数据出发，使用Evol-Instruct生成175K的指令微调数据集。
+<br />https://arxiv.org/pdf/2304.12244.pdf  WizardLM: Empowering Large Language Models to  Follow Complex Instructions
+<br />https://github.com/nlpxucan/WizardLM
+
+3、这篇论文通过精心设计的1000个示例，来证明多样性和质量高的指令微调数据集足以胜过大量质量不高的数据集。对比实验表明经过1K微调的LLaMA-65B(LIMA)模型效果优于Alpaca 65B(52K数据微调)和DaVinci003。消融实验微调LLaMa-7B模型，使用GPT-3.5 Turbo打分，生成5个response取平均。得出结论如下：1、LLM的知识几乎全来自预训练阶段 2、多样性和数据质量对模型效果的影响都非常大，数据量几乎无影响。文章最后的消融实验将经过1k数据微调的模型在30个多轮对话样本上再次微调，就大幅提升了模型的多轮对话能力，再次证明质量和多样性是关键，而非数据量。
+
+<br />数据：750个手工构造于三个社区论坛中，而剩余的250个为人工创作。
+<br />https://arxiv.org/pdf/2305.11206.pdf     LIMA: Less Is More for Alignment
+
 #### IFT数据
 指令微调数据集有很多，如
 <br />Alpaca(https://github.com/tatsu-lab/stanford_alpaca), 
@@ -74,7 +92,6 @@ LLM和MLLM在预训练阶段获取了足够的知识，但是在使用的时候�
 <br />使用Alpaca的训练数据集作为初始指令集，使用ChaGPT通过4个epoch将其重写为更复杂的指令，得到175K指令数据集 
 <br />LIMA(https://arxiv.org/pdf/2305.11206.pdf)
 <br />1K的训练数据，75%是从三个社区问答网站（Stack Exchange、wikiHow和Pushshift Reddit）中抽样的；20%手工编写，5%来自Super-Natural Instructions数据集的抽样。
-
 
 #### IFT数据筛选
 许多方法选择数据的依据为多样性和质量，利用GPT-3.5或者一些现有的大模型给指令数据集的质量进行打分，利用K-means聚类等方法将指令数据集划分为不同簇，从而选择更加多样的数据。
@@ -106,24 +123,6 @@ LLM和MLLM在预训练阶段获取了足够的知识，但是在使用的时候�
 
 <br />数据：从已有数据集Alpaca 52K  WizardLM 70K  Dolly 15K挑选长文本数据
 <br />https://doi.org/10.48550/arXiv.2402.06094  Rethinking Data Selection for Supervised Fine-Tuning
-
-#### IFT数据生成
-1、self-Instruct，使用LLM自动生成指令数据，步骤如下：首先，手工设计了175个表示不同任务的指令，并且给每条数据都编写了（指令, 输入, 输出）/（指令, 输出），将这175条数据作为种子池。其次，使用模型生成新的指令(使用few-shot ICL方式)，对该模型生成的指令判断是否分类任务(prompt模板不同，这里也使用few-shot ICL方式)。然后，使用模型生成实例，对上述模型生成的数据进行过滤和后处理，将经过过滤和后处理的数据添加到种子池中，一直重复上述步骤。文章使用GPT-3进行生成数据，并以此数据微调GPT-3，结果表明相比于原始GPT-3，其能力大幅提升，甚至可以和Instrcut-GPT001媲美。
-
-<br />数据：从175个指令数据出发，使用GPT-3生成了52K的指令，82K的实例。
-<br />https://arxiv.org/pdf/2212.10560.pdf  Self-Instruct: Aligning Language Model with Self Generated Instructions
-<br />https://github.com/yizhongw/self-instruct
-
-2、使用Evol-Instruct方法生成指令数据集，使用所有生成的指令数据来对LLaMA-7B进行微调得到WizardLM。Evol-Instruct：从简单的初始指令“1+1=？”开始，随机选择In-depth Evolving或In-breadth Evolving将简单指令升级为更复杂的指令或创建一个新的指令（增加多样性）。In-depth Evolving包括五种操作：添加约束、加深、具体化、增加推理步骤和复杂化输入。In-breadth Evolving是突变，即根据给定的指令生成一个全新的指令。这六种操作通过提示ChaGPT来实现。由于演化后的指令是从LLMs生成的，采用一个指令消除器过滤失败的指令。重复这个演化过程几轮，以获取包含指令数据。对比实验表明Evol-Instruct生成的指令优于人类创建的指令。通过分析高复杂度部分的人类评估结果，证明了WizardLM模型的输出优于OpenAI ChatGPT的输出。在GPT-4的自动评估中，WizardLM在29个任务中的17个超过了ChatGPT的90%。
-
-<br />数据：从Alpaca训练数据出发，使用Evol-Instruct生成175K的指令微调数据集。
-<br />https://arxiv.org/pdf/2304.12244.pdf  WizardLM: Empowering Large Language Models to  Follow Complex Instructions
-<br />https://github.com/nlpxucan/WizardLM
-
-3、这篇论文通过精心设计的1000个示例，来证明多样性和质量高的指令微调数据集足以胜过大量质量不高的数据集。对比实验表明经过1K微调的LLaMA-65B(LIMA)模型效果优于Alpaca 65B(52K数据微调)和DaVinci003。消融实验微调LLaMa-7B模型，使用GPT-3.5 Turbo打分，生成5个response取平均。得出结论如下：1、LLM的知识几乎全来自预训练阶段 2、多样性和数据质量对模型效果的影响都非常大，数据量几乎无影响。文章最后的消融实验将经过1k数据微调的模型在30个多轮对话样本上再次微调，就大幅提升了模型的多轮对话能力，再次证明质量和多样性是关键，而非数据量。
-
-<br />数据：750个手工构造于三个社区论坛中，而剩余的250个为人工创作。
-<br />https://arxiv.org/pdf/2305.11206.pdf     LIMA: Less Is More for Alignment
 
 
 ### 多模态大语言模型领域
