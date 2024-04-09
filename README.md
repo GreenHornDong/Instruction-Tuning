@@ -57,6 +57,11 @@ LLM和MLLM在预训练阶段获取了足够的知识，但是在使用的时候�
 <br />数据：手工构造，从医学、历史、工程和法学四个领域中筛选现有数据集的数据，构造三种训练集分别是Harmonious， Incompatible和Self-aligning，依据是模型在Few-shot ICL情况下能给出正确答案的就是Harmonious，给不出正确答案的是Incompatible，Self-aligning选用和Incompatible一致的指令和问题，但是回答则使用模型本身能够给出的回答。
 <br />https://arxiv.org/abs/2402.18243   Learning or Self-aligning? Rethinking Instruction Fine-tuning
 
+5、这篇文章假设SFT应该选择最能反映人类风格的示例。例如，教导LLM巴黎是法国的首都的示范是无益的，因为LLM在预训练阶段已经获得了这样的知识。相反，包含诸如“谢谢”和“首先”等词语的人类风格响应以及包含编号列表的结构化响应对于SFT是有帮助的(与上面的论文3和4相呼应)。文章指出选择响应更长的指令数据往往比多样性和质量高的指令数据表现更加稳定，相同的数据量选择响应更长的指令数据使得微调后的模型效果更好，为了评估模型的效果，选用GPT-4给两个response进行打分并给出解释，为了防止顺序的影响，会把两个response顺序进行交换，当GPT-4对交换前后的评定一致时，认为本次评定有效，消除顺序偏差，其次，在之前的研究中发现GPT-4对于长文本响应的偏好并不大，所以不考虑这一偏差。但是为了明确实验效果，后续采取人工评定的方式对响应进行打分，发现多数情况下GPT-4的选择并不是基于越长越好，50个对话里只有4个是因为响应文本长才使得GPT-4认为其更好。为了研究具有长回复的指令分布，文章使用伯克利神经解析器对来自Alpaca数据集中具有长回复的前1k个实例的指令的前20个最常见的根动词及其前4个直接名词对象进行解析，发现“写作”、“生成”、“创建”和“撰写”等指令根动词组成了所有指令的70％。
+
+<br />数据：从已有数据集Alpaca 52K  WizardLM 70K  Dolly 15K挑选长文本数据
+<br />https://doi.org/10.48550/arXiv.2402.06094  Rethinking Data Selection for Supervised Fine-Tuning
+
 #### IFT数据
 指令微调数据集有很多，如
 <br />Alpaca(https://github.com/tatsu-lab/stanford_alpaca), 
@@ -77,6 +82,7 @@ LLM和MLLM在预训练阶段获取了足够的知识，但是在使用的时候�
 1、通过多样性和质量共同进行自动挑选(首次引入)，多样性的选择依据是设置位置函数(facility location function), 给定数据集V，选出子集A，使得A中的a与V中的v距离最大
 <img width="628" alt="image" src="https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/371686b1-b4c4-4ec7-ae17-e0778929aff4">
 <br />数据质量则使用ChatGPT进行打分或者使用scoring model进行打分，Quality-Diversity Instruction Tuning(QDIT)的分数是多样性和质量的线性组合 f (a|A,α) = (1−α)d(a|A)+αq(a), α是控制质量和多样性的超参数，d(a|A)代表多样性分数，q(a)代表质量分数。依靠上述过程选出指令微调数据，消融实验表明，相对于随机选择和基于质量的选择，该方法效果更好，但是带来的计算开销较大，总数据集为V的话，每次挑选一个a使得QDIT最大需要的时间复杂度为O(V的三次方)，挑选K个则是O(V的三次方*K)。为了确保挑选出的数据确实满足多样性指标，文章使用伯克利神经解析器解析数据集中的根动词和第一直接名词，与随机选择和基于质量的挑选方式比较，表明文章方法确实有效。
+<img width="800" alt="image" src="https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/2ad77166-315f-4cb7-9076-4315794b597e">
 
 <br />数据：小数据集：Alpaca52K，Dolly 15K，大数据集：Ultrachat 1.3M, LMSYS-Chat 1M，组合数据集Alpaca 52K+Dolly 15K+OIG-small-chip2 210K。每个大数据集选10K个数据，小数据集选原数据集的5%左右
 <br />https://arxiv.org/pdf/2305.11206.pdf  Data Diversity Matters for Robust Instruction Tuning
@@ -86,7 +92,7 @@ LLM和MLLM在预训练阶段获取了足够的知识，但是在使用的时候�
 <br />数据：Chatgpt对数据打分，根据分值高于某一阈值筛选IFT数据
 <br />https://arxiv.org/pdf/2307.08701.pdf  ALPAGASUS: TRAINING A BETTER ALPACA WITH FEWER DATA
 
-3、MoDS从数据质量、多样性、必要性三个角度来对原始数据集进行数据过滤，以往方法多考虑质量和多样性，没有针对不同模型考虑数据必要性。质量和多样性顾名思义，数据必要性是选择对于大模型较复杂、较难或不擅长的数据，以填补大模型能力的空白。数据质量：采用OpenAssistant的reward-model-debertav3-large-v2模型对数据进行打分，选择出高质量数据集Data；然后使用K-Center-Greedy算法(采用BERT模型生成句向量来计算不同数据之间的距离)对Data1进行数据筛选, 得到种子数据集(Seed Instruction Data)SID。数据必要性：对于一条指令，如果LLM本身回答较好，则说明LLM具有处理该指令的能力，而那些不能处理的指令对于模型微调来说更重要，因此使用SID先微调LLM得到Initial LLM,用Initial LLM对高质量数据集Data1进行response，利用奖励模型对结果进行评分，当分值小于阈值β时，说明Initial LLM不具有处理这些类型指令的能力，获取必要性数据集Data2，对Data2进行多样性筛选，获取增强指令数据集(Augmented Instruction Data)AID。最终使用SID和AID微调并获得最终模型。
+3、MoDS从数据质量、多样性、必要性三个角度来对原始数据集进行数据过滤，以往方法多考虑质量和多样性，没有针对不同模型考虑数据必要性。质量和多样性顾名思义，数据必要性是选择对于大模型较复杂、较难或不擅长的数据，以填补大模型能力的空白。数据质量：采用OpenAssistant的reward-model-debertav3-large-v2模型对数据进行打分，选择出高质量数据集Data1；然后使用K-Center-Greedy算法(采用BERT模型生成句向量来计算不同数据之间的距离)对Data1进行数据筛选, 得到种子数据集(Seed Instruction Data)SID。数据必要性：对于一条指令，如果LLM本身回答较好，则说明LLM具有处理该指令的能力，而那些不能处理的指令对于模型微调来说更重要，因此使用SID先微调LLM得到Initial LLM,用Initial LLM对高质量数据集Data1进行response，利用奖励模型对结果进行评分，当分值小于阈值β时，说明Initial LLM不具有处理这些类型指令的能力，获取必要性数据集Data2，对Data2进行多样性筛选，获取增强指令数据集(Augmented Instruction Data)AID。最终使用SID和AID微调并获得最终模型。
 
 <br />https://arxiv.org/pdf/2311.15653.pdf   MoDS: Model-oriented Data Selection for Instruction Tuning
 <br />https://github.com/CASIA-LM/MoDS
@@ -96,7 +102,7 @@ LLM和MLLM在预训练阶段获取了足够的知识，但是在使用的时候�
 <br />https://arxiv.org/pdf/2311.08182.pdf   Self-Evolved Diverse Data Sampling for Efficient Instruction Tuning 
 <br />https://github.com/OFA-Sys/DiverseEvol
 
-5、这篇文章假设SFT应该选择最能反映人类风格的示例。例如，教导LLM巴黎是法国的首都的示范是无益的，因为LLM在预训练阶段已经获得了这样的知识。相反，包含诸如“谢谢”和“首先”等词语的人类风格响应以及包含编号列表的结构化响应对于SFT是有帮助的(与上面的论文3和4相呼应)。文章指出选择响应更长的指令数据往往比多样性和质量高的指令数据表现更加稳定，相同的数据量选择响应更长的指令数据使得微调后的模型效果更好，为了评估模型的效果，选用GPT-4给两个response进行打分并给出解释，为了防止顺序的影响，会把两个response顺序进行交换，当GPT-4对交换前后的评定一致时，认为本次评定有效，消除顺序偏差，其次，在之前的研究中发现GPT-4对于长文本响应的偏好并不大，所以不考虑这一偏差。但是为了明确实验效果，后续采取人工评定的方式对响应进行打分，发现多数情况下GPT-4的选择并不是基于越长越好，50个对话里只有4个是因为响应文本长才使得GPT-4认为其更好。为了研究具有长回复的指令分布，文章使用伯克利神经解析器对来自Alpaca数据集中具有长回复的前1k个实例的指令的前20个最常见的根动词及其前4个直接名词对象进行解析，发现“写作”、“生成”、“创建”和“撰写”等指令根动词组成了所有指令的70％。
+5、这篇文章假设SFT应该选择最能反映人类风格的示例。例如，教导LLM巴黎是法国的首都的示范是无益的，因为LLM在预训练阶段已经获得了这样的知识。相反，包含诸如“谢谢”和“首先”等词语的人类风格响应以及包含编号列表的结构化响应对于SFT是有帮助的(与上面的原理探究的论文3和4相呼应)。文章指出选择响应更长的指令数据往往比多样性和质量高的指令数据表现更加稳定，相同的数据量选择响应更长的指令数据使得微调后的模型效果更好，为了评估模型的效果，选用GPT-4给两个response进行打分并给出解释，为了防止顺序的影响，会把两个response顺序进行交换，当GPT-4对交换前后的评定一致时，认为本次评定有效，消除顺序偏差，其次，在之前的研究中发现GPT-4对于长文本响应的偏好并不大，所以不考虑这一偏差。但是为了明确实验效果，后续采取人工评定的方式对响应进行打分，发现多数情况下GPT-4的选择并不是基于越长越好，50个对话里只有4个是因为响应文本长才使得GPT-4认为其更好。为了研究具有长回复的指令分布，文章使用伯克利神经解析器对来自Alpaca数据集中具有长回复的前1k个实例的指令的前20个最常见的根动词及其前4个直接名词对象进行解析，发现“写作”、“生成”、“创建”和“撰写”等指令根动词组成了所有指令的70％。
 
 <br />数据：从已有数据集Alpaca 52K  WizardLM 70K  Dolly 15K挑选长文本数据
 <br />https://doi.org/10.48550/arXiv.2402.06094  Rethinking Data Selection for Supervised Fine-Tuning
@@ -108,7 +114,7 @@ LLM和MLLM在预训练阶段获取了足够的知识，但是在使用的时候�
 <br />https://arxiv.org/pdf/2212.10560.pdf  Self-Instruct: Aligning Language Model with Self Generated Instructions
 <br />https://github.com/yizhongw/self-instruct
 
-2、使用Evol-Instruct方法生成指令数据集，使用所有生成的指令数据来对LLaMA-7B进行微调得到WizardLM。Evol-Instruct：从简单的初始指令“1+1=？”开始，随机选择In-depth Evolving或In-breadth Evolving将简单指令升级为更复杂的指令或创建一个新的指令（增加多样性）。In-depth Evolving包括五种操作：添加约束、加深、具体化、增加推理步骤和复杂化输入。In-breadth Evolving是突变，即根据给定的指令生成一个全新的指令。这六种操作通过提示ChaGPT来实现。由于演化后的指令是从LLMs生成的，采用一个指令消除器过滤失败的指令。重复这个演化过程几轮，以获取包含各种复杂性的足够指令数据。对比实验表明Evol-Instruct生成的指令优于人类创建的指令。通过分析高复杂度部分的人类评估结果，证明了WizardLM模型的输出优于OpenAI ChatGPT的输出。在GPT-4的自动评估中，WizardLM在29个任务中的17个超过了ChatGPT的90%。
+2、使用Evol-Instruct方法生成指令数据集，使用所有生成的指令数据来对LLaMA-7B进行微调得到WizardLM。Evol-Instruct：从简单的初始指令“1+1=？”开始，随机选择In-depth Evolving或In-breadth Evolving将简单指令升级为更复杂的指令或创建一个新的指令（增加多样性）。In-depth Evolving包括五种操作：添加约束、加深、具体化、增加推理步骤和复杂化输入。In-breadth Evolving是突变，即根据给定的指令生成一个全新的指令。这六种操作通过提示ChaGPT来实现。由于演化后的指令是从LLMs生成的，采用一个指令消除器过滤失败的指令。重复这个演化过程几轮，以获取包含指令数据。对比实验表明Evol-Instruct生成的指令优于人类创建的指令。通过分析高复杂度部分的人类评估结果，证明了WizardLM模型的输出优于OpenAI ChatGPT的输出。在GPT-4的自动评估中，WizardLM在29个任务中的17个超过了ChatGPT的90%。
 
 <br />数据：从Alpaca训练数据出发，使用Evol-Instruct生成175K的指令微调数据集。
 <br />https://arxiv.org/pdf/2304.12244.pdf  WizardLM: Empowering Large Language Models to  Follow Complex Instructions
@@ -126,18 +132,18 @@ LLM和MLLM在预训练阶段获取了足够的知识，但是在使用的时候�
 
 
 #### 大模型(size >= 7B)
-1、MULTIINSTRUCT从现有的21个视觉语言数据集中构造了10类任务，具体包括62个任务，并手工为每类任务设计5个指令模板，文章还探究使用纯语言指令数据(NATURAL INSTRUCTIONS)结合MULTIINSTRUCT的微调效果。62个任务中有34个任务是从现有数据集获取的，剩下的28个任务通过从现有任务进行改写生成，例如区域描述任务可以改写为根据描述选择对应区域和根据区域选择对应描述。针对每个任务，生成5000-5M个实例，每个实例随机使用5个任务模板中的一个。实验结果表明，经过微调的OFA模型的多模态zero-shot能力大幅提升，首先在纯文本指令数据集NATURAL INSTRUCTIONS上微调，再在MULTIINSTRUCT数据上微调，可以获得表现最优的模型。消融实验表明：1、与FLAN类似，通过逐步增加视觉指令微调数据的种类和数量，模型的效果会越来越好，2、仅使用文本指令微调会降低模型的视觉理解能力，原因是模型对视觉标记的关注减少。
+1、MULTIINSTRUCT从现有的21个视觉语言数据集中构造了10类任务，具体包括62个任务，并手工为每类任务设计5个指令模板，文章还探究使用纯语言指令数据(NATURAL INSTRUCTIONS)结合MULTIINSTRUCT的微调效果。62个任务中有34个任务是从现有数据集获取的，剩下的28个任务通过从现有任务进行改写生成，例如区域描述任务可以改写为根据描述选择对应区域和根据区域选择对应描述。针对每个任务，生成5000-5M个实例，每个实例随机使用5个任务模板中的一个。实验结果表明，经过微调的模型的zero-shot能力大幅提升，首先在纯文本指令数据集NATURAL INSTRUCTIONS上微调，再在MULTIINSTRUCT数据上微调，可以获得表现最优的模型。消融实验表明：1、与FLAN类似，通过逐步增加视觉指令微调数据的种类和数量，模型的效果会越来越好，2、仅使用文本指令微调会降低模型的视觉理解能力，原因是模型对视觉标记的关注减少。
 <img width="552" alt="image" src="https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/6ce93287-a37d-41ec-8a4a-e9eca847251b">
 
 <br />https://arxiv.org/pdf/2212.10773.pdf   MULTIINSTRUCT: Improving Multi-Modal Zero-Shot Learning via Instruction Tuning
 <br />https://github.com/VT-NLP/MultiInstruct
 
-2、LLaVA模型在预训练阶段使用从CC3M筛选的图文对，并转成595K指令数据(单轮对话)，此阶段只训练projection layer；接着在158K的IFT数据集上进行微调，数据来源为现有的视觉描述数据集，将其中的图片描述+图像(将图像转换为由文本表示的Context，文章采用了两种Context，一种是图片描述，另一种是box以及对应物体的种类。)等信息以文本格式输入GPT-4或者Chatgpt，让他们生成对应的问题和回答(手工制作一些种子数据，并使用ICL提示大模型生成新数据)，指令手工制作，但是格式和内容十分简单，基本是围绕详细描述一下图片中的内容这种话制定的，在微调阶段训练projection layer+LLM。
+2、LLaVA模型在预训练阶段使用从CC3M筛选的图文对，并转成595K指令数据(单轮对话)，此阶段只训练projection layer；接着在158K的IFT数据集上进行微调，数据来源为现有的视觉描述数据集，将其中的图片描述+图像(将图像转换为由文本表示的Context，文章采用了两种Context，一种是图片描述，另一种是box以及对应物体的种类。)等信息以文本格式输入GPT-4或者Chatgpt，让他们生成对应的问题和回答(手工制作一些种子数据，并使用ICL提示大模型生成新数据)，指令手工制作，但是格式和内容十分简单，基本是围绕详细描述一下图片中的内容这种话制定的，在微调阶段训练projection layer+LLM。这篇论文对标LLM领域的self-instruct，使用现有的大模型去生成数据集。
 
 <br />https://arxiv.org/pdf/2304.08485.pdf     Visual Instruction Tuning
 <br />https://github.com/haotian-liu/LLaVA/blob/main/docs/Data.md
 
-3、M3IT数据集有40个数据集，包括240万个实例和400个手工编写的任务说明(每个数据集对应10个)，涵盖多样化的任务，包括字幕生成、视觉问答（VQA）、视觉条件生成、推理和分类。对使用图像特定区域的任务，将box注释直接在图像上用红色框标出，并使用Chatgpt改写VQA数据集中的的较短回答，测量指令数据之间的距离，确保指令多样性。最后通过人工筛查选出完整有效的数据。数据集格式为：图像(base64编码)，指令(从10个中随机选一个)，输入，输出，元数据(图像id,wikipedia_id等)。经上述数据集微调的模型展现出强大的zero-shot能力。
+3、M3IT数据集有40个数据集，包括240万个实例和400个手工编写的任务说明(每个数据集对应10个)，涵盖多样化的任务，包括字幕生成、视觉问答（VQA）、视觉条件生成、推理和分类。数据处理方式：对使用图像特定区域的任务，将box注释直接在图像上用红色框标出，并使用Chatgpt改写VQA数据集中的的较短回答，测量指令数据之间的距离，确保指令多样性。最后通过人工筛查选出完整有效的数据。数据集格式为：图像(base64编码)，指令(从10个中随机选一个)，输入，输出，元数据(图像id,wikipedia_id等)。经上述数据集微调的模型展现出强大的zero-shot能力。
 
 <img width="453" alt="image" src="https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/9f08eb23-e9e8-4b9a-a492-fcf7e048d421">
 
@@ -149,7 +155,7 @@ LLM和MLLM在预训练阶段获取了足够的知识，但是在使用的时候�
 <br />https://arxiv.org/pdf/2308.12714.pdf     VIGC: Visual Instruction Generation and Correction
 <br />https://opendatalab.github.io/VIGC/
 
-5、LAMM是一个全面的多模态指导调整数据集，用于2D图像和3D点云的理解。该数据集包含了18.6万个语言-图像指令响应对，以及1万个语言-点云指令响应对。作者从公开可用的数据集中收集图像和点云，并使用GPT-API和自指令方法根据这些数据集的原始标签生成指令和响应。LAMM数据集还包括了用于常识知识问答的数据对，通过将来自Bamboo数据集和相应的维基百科描述的分层知识图标签系统结合起来。
+5、LAMM是一个全面的多模态指导调整数据集，用于2D图像和3D点云的理解。该数据集包含了18.6万个语言-图像指令响应对，以及1万个语言-点云指令响应对。作者从公开可用的数据集中收集图像和点云，并使用GPT-API和自指令方法根据这些数据集的原始标签生成指令和响应。
 
 <br />https://arxiv.org/pdf/2306.06687.pdf    LAMM:Language-Assisted Multi-Modal Instruction-Tuning Dataset, Framework, and
  Benchmark
