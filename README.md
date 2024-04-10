@@ -46,7 +46,7 @@ LLM和MLLM在预训练阶段获取了足够的知识，但是在使用的时候�
 <br />数据：手工构造，数据量很大，CoT数据为人工编写。
 <br />https://doi.org/10.48550/arXiv.2210.11416   Scaling Instruction-Finetuned Language Models
 
-3、指令微调如何提升模型性能呢(LIMA仅使用1K的IFT数据集就可以大幅提升模型能力)，这篇文章给出了一些定量分析，从词汇token的偏移角度出发，对比微调后的模型和微调前的模型的回答的token分布，发现token会产生%5-8%左右的偏移(使用的模型为 Llama-2-7b -> Llama-2-7b-chat,  Llama-2-7b -> Vicuna-7b-v1.5, Mistral-7b -> Mistral-7b-instruct), 而且产生偏移的多数都是风格token，比如however, if这种词汇，会让模型的回答更加流畅和清晰，而模型回答中的关键词汇和信息，是模型本身经过预训练以后就具有的，也就是base模型和chat模型(tuned)产生的回答中关键信息一致，很有趣，所以这篇文章使用ICL作为提示+系统提示来代替指令微调，在这种情况下取得的结果和经管指令微调的模型效果不相上下。  
+3、指令微调如何提升模型性能呢(LIMA仅使用1K的IFT数据集就可以大幅提升模型能力)，这篇文章给出了一些定量分析，从词汇token的偏移角度出发，对比微调后的模型和微调前的模型的回答的token分布，发现token会产生%5-8%左右的偏移(使用的模型为 Llama-2-7b -> Llama-2-7b-chat,  Llama-2-7b -> Vicuna-7b-v1.5, Mistral-7b -> Mistral-7b-instruct), 而且产生偏移的多数都是风格token，比如however, if这种词汇，会让模型的回答更加流畅和清晰，而模型回答中的关键词汇和信息，是模型本身经过预训练以后就具有的，也就是base模型和chat模型(tuned)产生的回答中关键信息一致，很有趣，所以这篇文章使用ICL作为提示+系统提示来代替指令微调，在这种情况下取得的结果和经过指令微调的模型效果不相上下。  
 <img width="664" alt="image" src="https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/b0fb3636-c4fc-4c23-acb0-3586545f8095">
 
 <br />数据：手工构造，本文ICL数据的构造步骤较为繁琐。
