@@ -125,6 +125,8 @@ LLM和MLLM在预训练阶段获取了足够的知识，但是在使用的时候�
 <br />https://arxiv.org/pdf/2307.08701.pdf  ALPAGASUS: TRAINING A BETTER ALPACA WITH FEWER DATA
 
 3、MoDS从数据质量、多样性、必要性三个角度来对原始数据集进行数据过滤，以往方法多考虑质量和多样性，没有针对不同模型考虑数据必要性。质量和多样性顾名思义，数据必要性是选择对于大模型较复杂、较难或不擅长的数据，以填补大模型能力的空白。数据质量：采用OpenAssistant的reward-model-debertav3-large-v2模型对数据进行打分，选择出高质量数据集Data1；然后使用K-Center-Greedy算法(采用BERT模型生成句向量来计算不同数据之间的距离)对Data1进行数据筛选, 得到种子数据集(Seed Instruction Data)SID。数据必要性：对于一条指令，如果LLM本身回答较好，则说明LLM具有处理该指令的能力，而那些不能处理的指令对于模型微调来说更重要，因此使用SID先微调LLM得到Initial LLM,用Initial LLM对高质量数据集Data1进行response，利用奖励模型对结果进行评分，当分值小于阈值β时，说明Initial LLM不具有处理这些类型指令的能力，获取必要性数据集Data2，对Data2进行多样性筛选，获取增强指令数据集(Augmented Instruction Data)AID。最终使用SID和AID微调并获得最终模型。
+![图片](https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/3ba79688-3216-45fa-9411-6ac9755d8754)
+
 
 <br />https://arxiv.org/pdf/2311.15653.pdf   MoDS: Model-oriented Data Selection for Instruction Tuning
 <br />https://github.com/CASIA-LM/MoDS
@@ -173,7 +175,7 @@ LLM和MLLM在预训练阶段获取了足够的知识，但是在使用的时候�
 
 <br />https://arxiv.org/pdf/2306.06687.pdf    LAMM:Language-Assisted Multi-Modal Instruction-Tuning Dataset, Framework, and
  Benchmark
- <br />https://github.com/OpenGVLab/LAMM
+<br />https://github.com/OpenGVLab/LAMM
 
 6、LLaVA-1.5所使用的微调数据，公开可用，详细信息如下。ALLAVA中也使用了该数据进行微调。
  <img width="393" alt="image" src="https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/cc3281b7-7f9d-460a-8f3b-7be933e302db">
