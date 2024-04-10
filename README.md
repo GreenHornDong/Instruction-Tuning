@@ -22,7 +22,7 @@ LLM和MLLM在预训练阶段获取了足够的知识，但是在使用的时候�
 <br />Question: 1+3=? Answer: 4  <br />Question: 2+3=? Answer: 5  <br />Question: 1+2=?
 <br />然后模型给出回答，这里有两个样例，所以是2-shot
 
-<br />对于经过IFT的模型，直接问，Question: 1+2=?就可以。
+<br />对于经过IFT的模型，使用对应的指令模板，并加上问题Question: 1+2=?就可以。
 
 ### 数据构成
 指令微调数据一般如下：
