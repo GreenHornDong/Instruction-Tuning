@@ -229,7 +229,7 @@ LLM和MLLM在预训练阶段获取了足够的知识，但是在使用的时候�
 <br />模型效果如下：
 <img width="799" alt="image" src="https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/c3c86cd0-e75f-49aa-9259-9687a306f2aa">
 
-文章中提到他们所选择的数据来自一个visual instruction tuning data数据集合，包含20个公开数据集，链接为https://github.com/BAAI-DCAI/DataOptim。
+文章中提到他们所选择的数据来自一个visual instruction tuning data数据集合，包含20个公开数据集，链接为https://github.com/BAAI-DCAI/DataOptim
 
 <br />https://doi.org/10.48550/arXiv.2402.11530    Efficient Multimodal Learning from Data-centric Perspective
 <br />https://github.com/BAAI-DCAI/Bunny
