@@ -52,8 +52,14 @@ llava_v1_5_mix665K数据去重(0.9)：
 | VG_100K_2 | 33,074 | 33,074 | 7179 | 25895 |
 | ocr_vqa | 80,000 | 80,000 | 28000 | 52000 |
 
+coco数据集示例1（id 000000377952 000000355609）：
+<img width="724" alt="image" src="https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/ac206f1d-5190-4276-acda-f1397665289b">
 
+coco数据集示例2（id 000000117322 000000407671）：
+<img width="614" alt="image" src="https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/7a3682ff-9397-4918-a867-9fd8ab6704b1">
 
+coco数据集示例2（id 000000476631 000000407671）：
+<img width="617" alt="image" src="https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/e28ede82-789e-4f01-a0cd-489e6bf56e23">
 
 **每列含义：**
 
