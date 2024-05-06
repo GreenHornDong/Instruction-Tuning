@@ -1,4 +1,4 @@
-<img width="428" alt="image" src="https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/c8986fde-8ca6-4ef3-80fb-ca4adab4afc1"><img width="397" alt="image" src="https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/3ec75e2c-9647-432a-854b-30d014276b45"><img width="382" alt="image" src="https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/0098d993-d25f-4a9b-9b2a-b5b07ff50c6a"><img width="613" alt="image" src="https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/b3e4894f-3fc2-41fd-8edc-cae802f4afb2">1、blip_laion_cc_sbu_558k：所有指令均围绕描述一下这张图的内容构造, 指令过于简单，单轮对话，信息量极少。
+1、blip_laion_cc_sbu_558k：所有指令均围绕描述一下这张图的内容构造, 指令过于简单，单轮对话，信息量极少。
 
 <br />![图片](https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/24e656d8-ac8c-4993-b070-692a953870a7)
 
