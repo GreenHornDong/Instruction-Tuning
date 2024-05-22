@@ -195,12 +195,15 @@ llava_v1_5_mix665K数据去重(0.8)：
 | gqa | 72,140 |  69472 | 2668 | 96.3  | 
 
 <br />
-llava_v1_5_mix665K数据去重(0.85)：
+
+llava_v1_5_mix665K数据去重(0.85)： 
 | Dataset | 原始数据 | 过滤数据 | 过滤后数据 | 过滤百分比 |
 | --- | --- | --- | --- | --- |
 | gqa | 72,140 |  64532 | 7608 | 89.4  | 
 
+
 <br />
+
 llava_v1_5_mix665K数据去重(0.9)：
 | Dataset | 原始数据 | 过滤数据 | 过滤后数据 | 过滤百分比 |
 | --- | --- | --- | --- | --- |
@@ -208,15 +211,18 @@ llava_v1_5_mix665K数据去重(0.9)：
 
 
 <br />
+
 llava_v1_5_mix665K数据去重(0.99)：
 | Dataset | 原始数据 | 过滤数据 | 过滤后数据 | 过滤百分比 |
 | --- | --- | --- | --- | --- | 
 | gqa | 72,140 |  20898 | 51242 | 28.9  | 
 
-[{'from': 'human', 'value': '<image>\nWhat is on the pole?\nAnswer the question using a single word or phrase.'}, {'from': 'gpt', 'value': 'Traffic light'}, {'from': 'human', 'value': 'What is on the black pole?'}, {'from': 'gpt', 'value': 'Traffic light'}, {'from': 'human', 'value': 'Is there any clock on the black pole?'}, {'from': 'gpt', 'value': 'No'}, {'from': 'human', 'value': 'Do you see any black traffic lights or scooters?'}, {'from': 'gpt', 'value': 'Yes'}, {'from': 'human', 'value': 'What do both the traffic signal and the pole have in common?'}, {'from': 'gpt', 'value': 'Color'}, {'from': 'human', 'value': 'What color is that truck?'}, {'from': 'gpt', 'value': 'Blue'}, {'from': 'human', 'value': 'On which side is the traffic light?'}, {'from': 'gpt', 'value': 'Right'}]
-[{'from': 'human', 'value': '<image>\nWhat is on the pole?\nAnswer the question using a single word or phrase.'}, {'from': 'gpt', 'value': 'Street light'}, {'from': 'human', 'value': 'Which color are the letters, yellow or red?'}, {'from': 'gpt', 'value': 'Yellow'}, {'from': 'human', 'value': 'Do you see doors there?'}, {'from': 'gpt', 'value': 'No'}, {'from': 'human', 'value': 'Does the sky look cloudy and blue?'}, {'from': 'gpt', 'value': 'Yes'}, {'from': 'human', 'value': 'Are there black letters or numbers?'}, {'from': 'gpt', 'value': 'No'}]
+<img width="562" alt="image" src="https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/e5d561cd-38ed-4189-988f-72dfd1bbc1ac">
+
+<img width="557" alt="image" src="https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/7665849d-70c6-4485-be09-d4cc4e02d9d6">
+
 
 <img width="599" alt="image" src="https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/7e7ddf67-747a-46dc-92a5-5de274cb2902">
 
 
-## 上述方法不太可行
+## 上述方法不可行，可以把有效信息提取出来拼接后实验
