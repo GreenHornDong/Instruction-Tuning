@@ -179,37 +179,37 @@ VG数据集示例8（id VG_100K_2/2388547 VG_100K_2/2383709 score:  0.9091617465
 
 <br />
 <br />
-## 文本数据去重
+## 文本数据去重（使用gte_Qwen1_5-7B-instruct计算文本相似度）
 <br /> 
 
 llava_v1_5_mix665K数据去重(0.8)：
 | Dataset | 原始数据 | 过滤数据 | 过滤后数据 | 过滤百分比 |
 | --- | --- | --- | --- | --- |
-| coco | 364,100 |  86,359 | 2,165 | 97.6 |
-| gqa | 72,140 |  69472 | 2668 | 97.3 |
-| textvqa | 21,953 | 20,255 | 1,698 | 92.3 |
-| VG_100K | 53,343 | 51,779 | 1,564 | 97.1 |
-| VG_100K_2 | 33,074 | 31,724 | 1,350 | 95.9 |
-| ocr_vqa | 80,000 | 79,328 | 672 | 99.2 |
+| gqa | 72,140 |  69472 | 2668 | 96.3  | 
 
 <br />
 llava_v1_5_mix665K数据去重(0.85)：
 | Dataset | 原始数据 | 过滤数据 | 过滤后数据 | 过滤百分比 |
 | --- | --- | --- | --- | --- |
-| coco | 364,100 |  86,359 | 2,165 | 97.6 |
-| gqa | 72,140 |  64532 | 7608 | 97.3 |
-| textvqa | 21,953 | 20,255 | 1,698 | 92.3 |
-| VG_100K | 53,343 | 51,779 | 1,564 | 97.1 |
-| VG_100K_2 | 33,074 | 31,724 | 1,350 | 95.9 |
-| ocr_vqa | 80,000 | 79,328 | 672 | 99.2 |
+| gqa | 72,140 |  64532 | 7608 | 89.4  | 
 
 <br />
 llava_v1_5_mix665K数据去重(0.9)：
 | Dataset | 原始数据 | 过滤数据 | 过滤后数据 | 过滤百分比 |
 | --- | --- | --- | --- | --- |
-| coco | 364,100 |  86,359 | 2,165 | 97.6 |
-| gqa | 72,140 |  53470 | 18670 | 97.3 |
-| textvqa | 21,953 | 9235 | 12718 | 92.3 |
-| VG_100K | 53,343 | 51,779 | 1,564 | 97.1 |
-| VG_100K_2 | 33,074 | 31,724 | 1,350 | 95.9 |
-| ocr_vqa | 80,000 | 79,328 | 672 | 99.2 |
+| gqa | 72,140 |  53470 | 18670 |  74.1 | 
+
+
+<br />
+llava_v1_5_mix665K数据去重(0.99)：
+| Dataset | 原始数据 | 过滤数据 | 过滤后数据 | 过滤百分比 |
+| --- | --- | --- | --- | --- | 
+| gqa | 72,140 |  20898 | 51242 | 28.9  | 
+
+[{'from': 'human', 'value': '<image>\nWhat is on the pole?\nAnswer the question using a single word or phrase.'}, {'from': 'gpt', 'value': 'Traffic light'}, {'from': 'human', 'value': 'What is on the black pole?'}, {'from': 'gpt', 'value': 'Traffic light'}, {'from': 'human', 'value': 'Is there any clock on the black pole?'}, {'from': 'gpt', 'value': 'No'}, {'from': 'human', 'value': 'Do you see any black traffic lights or scooters?'}, {'from': 'gpt', 'value': 'Yes'}, {'from': 'human', 'value': 'What do both the traffic signal and the pole have in common?'}, {'from': 'gpt', 'value': 'Color'}, {'from': 'human', 'value': 'What color is that truck?'}, {'from': 'gpt', 'value': 'Blue'}, {'from': 'human', 'value': 'On which side is the traffic light?'}, {'from': 'gpt', 'value': 'Right'}]
+[{'from': 'human', 'value': '<image>\nWhat is on the pole?\nAnswer the question using a single word or phrase.'}, {'from': 'gpt', 'value': 'Street light'}, {'from': 'human', 'value': 'Which color are the letters, yellow or red?'}, {'from': 'gpt', 'value': 'Yellow'}, {'from': 'human', 'value': 'Do you see doors there?'}, {'from': 'gpt', 'value': 'No'}, {'from': 'human', 'value': 'Does the sky look cloudy and blue?'}, {'from': 'gpt', 'value': 'Yes'}, {'from': 'human', 'value': 'Are there black letters or numbers?'}, {'from': 'gpt', 'value': 'No'}]
+
+<img width="599" alt="image" src="https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/7e7ddf67-747a-46dc-92a5-5de274cb2902">
+
+
+## 上述方法不太可行
