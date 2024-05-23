@@ -185,44 +185,51 @@ VG数据集示例8（id VG_100K_2/2388547 VG_100K_2/2383709 score:  0.9091617465
 <br /> 
 
 
-## 文本数据去重（使用gte_Qwen1_5-7B-instruct计算文本相似度）
+## 文本数据去重（提取有效信息，使用gte_Qwen1_5-7B-instruct计算文本相似度）
 
 <br /> 
 
 llava_v1_5_mix665K数据去重(0.8)：
 | Dataset | 原始数据 | 过滤数据 | 过滤后数据 | 过滤百分比 |
 | --- | --- | --- | --- | --- |
-| gqa | 72,140 |  69472 | 2668 | 96.3  | 
+| gqa | 72,140 |  27993 | 44147  | 96.3  | 
+| ocr_vqa | 80000  |  34926 | 45074   | 96.3  | 
+| text_vqa | 21953  |  5660 | 16293   | 96.3  | 
+| VG_100K | 53343  |  35918 | 17425  | 96.3  | 
+| VG_100K_2 | 33074  |  20266 | 12808   | 96.3  | 
 
 <br />
 
-llava_v1_5_mix665K数据去重(0.85)： 
+llava_v1_5_mix665K数据去重(0.85)：
 | Dataset | 原始数据 | 过滤数据 | 过滤后数据 | 过滤百分比 |
 | --- | --- | --- | --- | --- |
-| gqa | 72,140 |  64532 | 7608 | 89.4  | 
+| gqa | 72,140 |  7042 | 65098   | 96.3  | 
+| ocr_vqa | 80000  |  15402 | 64598    | 96.3  | 
+| text_vqa | 21953  |  1721 | 20232    | 96.3  | 
+| VG_100K | 53343  |  35918 | 17425  | 96.3  | 
+| VG_100K_2 | 33074  |  6256 | 26818  | 96.3  | 
 
 
 <br />
 
-llava_v1_5_mix665K数据去重(0.9)：
+llava_v1_5_mix665K数据去重(0.90)：
 | Dataset | 原始数据 | 过滤数据 | 过滤后数据 | 过滤百分比 |
 | --- | --- | --- | --- | --- |
-| gqa | 72,140 |  53470 | 18670 |  74.1 | 
+| gqa | 72,140 |  1661  | 70479    | 96.3  | 
+| ocr_vqa | 80000  |  5586 | 74414     | 96.3  | 
+| text_vqa | 21953  |  246 | 21707    | 96.3  | 
+| VG_100K | 53343  |  1047 | 52296   | 96.3  | 
+| VG_100K_2 | 33074  |  327 | 32747   | 96.3  | 
 
 
 <br />
+ gqa数据集示例1（id 4862 4812 score:  0.8597954511642456）： 
+<br />
+<img width="478" alt="image" src="https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/4b28f6c6-14f1-4089-a783-b433fa689a4b">
 
-llava_v1_5_mix665K数据去重(0.99)：
-| Dataset | 原始数据 | 过滤数据 | 过滤后数据 | 过滤百分比 |
-| --- | --- | --- | --- | --- | 
-| gqa | 72,140 |  20898 | 51242 | 28.9  | 
+<img width="467" alt="image" src="https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/d2fa2d37-8bcc-4869-b885-e85104ab4db6">
 
-<img width="562" alt="image" src="https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/e5d561cd-38ed-4189-988f-72dfd1bbc1ac">
-
-<img width="557" alt="image" src="https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/7665849d-70c6-4485-be09-d4cc4e02d9d6">
+![image](https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/146d10a7-df33-4ba8-b553-52fc15b0b78e)
 
 
-<img width="599" alt="image" src="https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/7e7ddf67-747a-46dc-92a5-5de274cb2902">
 
-
-## 上述方法不可行，可以把有效信息提取出来拼接后实验
