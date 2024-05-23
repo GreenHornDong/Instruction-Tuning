@@ -223,7 +223,7 @@ llava_v1_5_mix665K数据去重(0.90)：
 
 
 <br />
- gqa数据集示例1（id 4862 4812 score:  0.8597954511642456）： 
+ gqa数据集示例1（id 4862 4812 score:  0.85）： 
 <br />
 <img width="478" alt="image" src="https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/4b28f6c6-14f1-4089-a783-b433fa689a4b">
 
@@ -231,5 +231,73 @@ llava_v1_5_mix665K数据去重(0.90)：
 
 ![image](https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/146d10a7-df33-4ba8-b553-52fc15b0b78e)
 
+<br />
+ gqa数据集示例2（id 1668 9 score:  0.80）： 
+<br />
+![image](https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/9a6fc4cc-fc8d-42cf-9190-6bf78bc61ea3)
 
+
+<br />
+ gqa数据集示例3（id 1515 9 score:  0.81）： 
+<br />
+![image](https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/97cef116-6933-4f35-be85-6ececd69f85c)
+
+<br />
+VG数据集示例1（id VG_100K_2/2409256 VG_100K_2/2379584 score:  0.87）： 
+<br />
+![image](https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/419b431f-2eb1-4883-8d84-39de940d7d1a)
+
+
+<br />
+VG数据集示例2（id VG_100K_2/2384651 VG_100K_2/2411289 score:  0.86）： 
+<br />
+![image](https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/3a426de3-cc6b-4987-a6dd-92519206aaf7)
+
+<br />
+VG数据集示例3（id VG_100K/2360667 VG_100K/2340039 score:  0.81）： 
+<br />
+![image](https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/331cb345-cb0c-4d24-a090-5f1109f2042a)
+
+<br />
+VG数据集示例4（id VG_100K/2361161 VG_100K/2353803 score:  0.85）： 
+<br />
+![image](https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/faf60476-7cca-4e94-a959-4d35f42d45ce)
+
+
+<br />
+VG数据集示例5（ id VG_100K/2361999 VG_100K/1159979 score:  0.85）： 
+<br />
+![image](https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/f66ff5ec-1abb-4875-95aa-473fc3be60fb)
+
+<br />
+VG数据集示例6（id VG_100K/2341788 VG_100K/2319322 score:  0.85）： 
+<br />
+![image](https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/218110bc-2432-4661-979d-3349c24cc4a1)
+
+<br />
+ocr_vqa数据集示例1（id 91939690 1511924772 score:  0.85）： 
+<br />
+<img width="468" alt="image" src="https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/af8556b7-9100-48b6-b105-5685f74bf798">
+
+![image](https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/a1fc1a68-663f-4241-a885-04c01948b304)
+
+<br />
+ocr_vqa数据集示例2（id 1517282969 1517464560 score:  0.87）： 
+<br />
+<img width="464" alt="image" src="https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/44d7ceb2-c674-41e0-ac00-c2451ab15bf4">
+
+![image](https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/478f6306-c0dc-45ea-8790-fdde5f0e6c63)
+
+<br />
+ocr_vqa数据集示例3（id 1935707833 098417804X score:  0.86）： 
+<br />
+<img width="468" alt="image" src="https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/7970d76b-7cfe-429c-9853-1762d46d3296">
+![image](https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/8f5e333b-657b-408a-8629-df36716bab45)
+
+
+<br />
+ocr_vqa数据集示例4（id 310745640 310339553 score:  0.92）： 
+<br />
+<img width="475" alt="image" src="https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/28d6cd75-c669-4be7-a3af-5aa5cad796b5">
+![image](https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/98e22225-c2ba-4d59-aa1f-947e3a3bff08)
 
