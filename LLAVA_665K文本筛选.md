@@ -96,7 +96,7 @@ coco数据集示例6（id 257669 318594 score:  0.90）：
 <br />
 VG数据集示例1（id VG_100K_2/2409256 VG_100K_2/2379584 score:  0.87）： 
 <br />
-![image](https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/419b431f-2eb1-4883-8d84-39de940d7d1a)
+<img width="623" alt="image" src="https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/419b431f-2eb1-4883-8d84-39de940d7d1a")
 
 
 <br />
