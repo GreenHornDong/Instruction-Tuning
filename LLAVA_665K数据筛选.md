@@ -1,4 +1,4 @@
-![image](https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/56a2db09-d777-4211-9b57-ffbae4ef7a6c)## 图片数据去重
+## 图片数据去重
 <br />
 llava_v1_5_mix665K数据去重(0.7)：
 
@@ -243,20 +243,21 @@ coco数据集示例3（id 306178 282998 score:  0.82）：
 <br />
 coco数据集示例4（id 297969 525405 score:  0.85）：
 <br />
-![Uploading image.png…]()
+<img width="547" alt="image" src="https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/6b623319-4c61-4962-9203-f08fd6446d9d">
 
 
 <br />
 coco数据集示例5（id 137690 418173 score:  0.86）：
 <br />
 
-![Uploading image.png…]()
+<img width="547" alt="image" src="https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/1ca87024-9fe6-416c-8818-7958ae870d5f">
 
 
 <br />
 coco数据集示例6（id 257669 318594 score:  0.90）：
 <br />
-![Uploading image.png…]()
+<img width="547" alt="image" src="https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/f1e51f4a-efb4-4b5f-9a07-df670517e826">
+
 
 
  gqa数据集示例1（id 4862 4812 score:  0.85）： 
