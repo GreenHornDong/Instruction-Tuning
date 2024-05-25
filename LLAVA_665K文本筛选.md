@@ -78,17 +78,20 @@ coco数据集示例6（id 257669 318594 score:  0.90）：
 <br />
 <img width="467" alt="image" src="https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/d2fa2d37-8bcc-4869-b885-e85104ab4db6">
 <br />
+<img width="615" alt="image" src="https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/faf8c838-4611-4a04-8f45-05b7d0f1db54">
 
 <br />
  gqa数据集示例2（id 1668 9 score:  0.80）： 
 <br />
-![image](https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/9a6fc4cc-fc8d-42cf-9190-6bf78bc61ea3)
+<img width="623" alt="image" src="https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/9b25c5af-7dc7-4a19-bbd6-120c63f6d202">
+
 
 
 <br />
  gqa数据集示例3（id 1515 9 score:  0.81）： 
 <br />
-![image](https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/97cef116-6933-4f35-be85-6ececd69f85c)
+![Uploading image.png…]()
+
 
 <br />
 VG数据集示例1（id VG_100K_2/2409256 VG_100K_2/2379584 score:  0.87）： 
