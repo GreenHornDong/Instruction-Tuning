@@ -70,6 +70,10 @@ coco数据集示例6（id 257669 318594 score:  0.90）：
 <br />
 <img width="547" alt="image" src="https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/f1e51f4a-efb4-4b5f-9a07-df670517e826">
 
+<br />
+coco数据集示例7（id 532419 361119 score:  0.91）：
+<br />
+<img width="559" alt="image" src="https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/633003a8-3020-42d1-9229-578fa3b6e4dc">
 
 
  gqa数据集示例1（id 4862 4812 score:  0.85）： 
