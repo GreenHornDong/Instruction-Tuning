@@ -16,7 +16,7 @@ llava_v1_5_mix665K数据去重(0.8)：
 llava_v1_5_mix665K数据去重(0.85)：
 | Dataset | 原始数据 | 过滤数据 | 过滤后数据 | 过滤百分比 |
 | --- | --- | --- | --- | --- |
-| coco | 364100 |  100946   | 263154   | 27.7  | 
+| coco | 364100 |  100946 | 263154   | 27.7  | 
 | gqa | 72,140 |  7042 | 65098   | 9.76  | 
 | ocr_vqa | 80000  |  15402 | 64598    | 19.25  | 
 | text_vqa | 21953  |  1721 | 20232    | 7.84  | 
@@ -62,6 +62,7 @@ coco数据集示例4（id 297969 525405 score:  0.85）：
 <br />
 coco数据集示例5（id 137690 418173 score:  0.86）：
 <br />
+<img width="559" alt="image" src="https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/53df487c-e9af-4c7c-b89c-0eaeda3e9e55">
 
 <br />
 coco数据集示例6（id 257669 318594 score:  0.90）：
@@ -73,9 +74,9 @@ coco数据集示例6（id 257669 318594 score:  0.90）：
  gqa数据集示例1（id 4862 4812 score:  0.85）： 
 <br />
 <img width="478" alt="image" src="https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/4b28f6c6-14f1-4089-a783-b433fa689a4b">
-
+<br />
 <img width="467" alt="image" src="https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/d2fa2d37-8bcc-4869-b885-e85104ab4db6">
-
+<br />
 ![image](https://github.com/GreenHornDong/Instruction-Tuning/assets/101792419/146d10a7-df33-4ba8-b553-52fc15b0b78e)
 
 <br />
